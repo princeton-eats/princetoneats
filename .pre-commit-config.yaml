@@ -11,3 +11,9 @@ repos:
       - id: ruff
         args: ["--fix", "--show-fixes"]
       - id: ruff-format
+  - repo: local
+    hooks:
+      - id: update-requirements
+        name: Update requirements.txt
+        entry: bash -c 'pip freeze > requirements.txt && git add requirements.txt'
+        language: system

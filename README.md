@@ -32,6 +32,11 @@ pip install -r requirements.txt
 pre-commit install
 ```
 
+### 5. Fetch and checkout the current development version
+```bash
+git checkout -b dev origin/dev
+```
+
 ## Run the app
 
 ```bash

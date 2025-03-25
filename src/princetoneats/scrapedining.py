@@ -1,3 +1,4 @@
+# Created by Yusuf, Adham, Ndongo, Achilles, Akuei
 import argparse
 import requests
 from bs4 import BeautifulSoup

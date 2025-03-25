@@ -40,6 +40,15 @@ body {
    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
+.containerSmall {
+   max-width: 300px;
+   margin: 60px auto;
+   background-color: red;
+   padding: 30px;
+   border-radius: 10px;
+   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
 /* Meal Results */
 #mealResults {
    margin-top: 20px;

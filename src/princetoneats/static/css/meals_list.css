@@ -1,0 +1,82 @@
+/* General Styles */
+body {
+   font-family: Arial, sans-serif;
+   margin: 0;
+   padding: 0;
+   background-color: #f5d08e;
+   text-align: center;
+}
+
+/* Navbar */
+.navbar {
+   background-color: #e87722;
+   padding: 15px;
+   color: white;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 15px 40px;
+   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.nav-links {
+   display: flex;
+}
+
+.nav-links a {
+   color: white;
+   text-decoration: none;
+   margin-left: 15px;
+   font-weight: bold;
+}
+
+/* Page Content */
+.container {
+   max-width: 700px;
+   margin: 60px auto;
+   background-color: #f8c471;
+   padding: 30px;
+   border-radius: 10px;
+   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Meal Results */
+#mealResults {
+   margin-top: 20px;
+   font-size: 18px;
+   font-weight: bold;
+   background: white;
+   padding: 15px;
+   border-radius: 8px;
+   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+   text-align: left;
+}
+
+/* Button Fix */
+button {
+   background-color: #137a3d;
+   color: white;
+   padding: 12px 20px;
+   border: none;
+   cursor: pointer;
+   font-size: 16px;
+   font-weight: bold;
+   margin-top: 15px;
+   border-radius: 5px;
+   transition: 0.3s;
+}
+
+button:hover {
+   background-color: #0e5e2d;
+}
+
+/* Footer */
+footer {
+   text-align: center;
+   padding: 15px;
+   background-color: #e87722;
+   color: white;
+   position: fixed;
+   bottom: 0;
+   width: 100%;
+}

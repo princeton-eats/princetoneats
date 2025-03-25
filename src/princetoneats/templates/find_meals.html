@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Meals - Princeton Eats</title>
+    <link rel="stylesheet" href="/src/princetoneats/static/css/find_meals.css">
+</head>
+<body>
+    <nav class="navbar">
+        <h1 class="logo">Princeton Eats</h1>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="#">Sign In</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="preferences-box">
+            <h2>Select Your Preferences</h2>
+            <hr class="line">
+            <form id="mealForm">
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="filter" value="vegan"> Vegan</label>
+                    <label><input type="checkbox" name="filter" value="vegetarian"> Vegetarian</label>
+                    <label><input type="checkbox" name="filter" value="halal"> Halal</label>
+                    <label><input type="checkbox" name="filter" value="gluten-free"> Gluten Free</label>
+                    <label><input type="checkbox" name="filter" value="dairy-free"> Dairy Free</label>
+                    <label><input type="checkbox" name="filter" value="peanut-free"> Peanut Allergy</label>
+                    <label><input type="checkbox" name="filter" value="other"> More...</label>
+                </div>
+
+                <div class="buttons">
+                    <button id="enterButton" class="btn">Enter</button>
+                    <button onclick="location.href='templates/meals_list.html'">Enter</button>
+                    <button onclick="location.href='index.html'">Back</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>Made by <span class="names">Achilles, Adham, Akuei, Ndongo, and Yusuf</span></p>
+    </footer>
+
+    <script src="static/js/script.js"></script>
+</body>
+</html>

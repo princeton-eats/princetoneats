@@ -3,40 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Princeton Eats</title>
-    <link rel="stylesheet" href="static/css/index.css">
+    <title>Simple Web App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div class="header">
-        <h1>Princeton Eats!</h1>
-    </div>
-
-    <div class="container">
-        <p class="intro"><strong>Imagine this...</strong></p>
-        <hr class="line">
-        <p class="description">
-            You’re rushing out of COS 333 at 12:20 PM, stomach growling, with just over an hour before your next class.
-            You need to grab lunch, but there’s a problem—your dietary restrictions mean you can’t just walk into any dining
-            hall and eat anything available. Princeton Dining’s website has the info, but sifting through menus for all seven halls?
-            That’s time you don’t have, and you are NOT the only one who feels that way. It’s so many of us out here.
-            That’s where Princeton Eats comes in, your personal dining meal recommend. In seconds, it scans every dining hall menu,
-            filters meals based on your preferences—vegan, halal, gluten-free, nut-free, you name it—and tells you exactly where to go
-            for a meal that fits your needs.
-        </p>
-
-        <p class="subtext">No stress, no scrolling, just fast, personalized meal recommendations.</p>
-
-        <div class="buttons">
-            <button onclick="location.href='/find_meals'">FIND MEALS</button>
-            <button onclick="location.href='#'">SIGN IN</button>
-        </div>
-    </div>
-
-    <footer>
-        <p>Made By Achilles, Adham, Akuei, Ndongo, and Yusuf</p>
-    </footer>
-
-    <script src="js/script.js"></script>
-
+    <h1>Welcome to Princeton Eats</h1>
 </body>
 </html>

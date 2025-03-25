@@ -37,8 +37,8 @@ def scrape_divs(url, class_name):
     for div in divs:
         print(div.get_text(strip=True), end=" ")
         # Find all <a> tags within the div and print their href attribute
-        for a_tag in div.find_all("a", href=True):
-            print(ingredients_page_start + a_tag["href"])
+        # for a_tag in div.find_all("a", href=True):
+        #     print(ingredients_page_start + a_tag["href"])
         print()
 
 

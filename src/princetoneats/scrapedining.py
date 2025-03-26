@@ -2,8 +2,13 @@
 import argparse
 import requests
 from bs4 import BeautifulSoup
+from datetime import datetime
 
 ingredients_page_start = "https://menus.princeton.edu/dining/_Foodpro/online-menu/"
+
+
+def get_current_date():
+    return datetime.now().strftime("%m/%d/%y")
 
 
 def map_args(hall, date):
@@ -16,7 +21,10 @@ def map_args(hall, date):
     elif hall == "y" or hall == "yeh":
         hall_url = "Yeh+College+%26+New+College+West"
 
-    date_url = "%2F".join(date.split("/"))
+    if date is None:
+        date_url = get_current_date()
+    else:
+        date_url = "%2F".join(date.split("/"))
 
     return hall_url, date_url
 
@@ -47,7 +55,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Scrape divs from a website")
     parser.add_argument("--hall", required=True, help="Specify the hall")
     parser.add_argument("--meal", required=True, help="Specify which meal of the day")
-    parser.add_argument("--date", required=True, help="Specify the date")
+    parser.add_argument("--date", required=False, help="Specify the date")
     args = parser.parse_args()
 
     hall_url, date_url = map_args(args.hall, args.date)

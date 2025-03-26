@@ -18,7 +18,11 @@
     <div class="container">
         <h2>Here are Your Options</h2>
         <div id="mealResults">
-            <p>Loading meals...</p>
+            <ul>
+                {% for meal_name in meals %}
+                    <li>{{ meal_name }}</li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
 

@@ -1,6 +1,7 @@
 # Created by Yusuf, Adham, Ndongo, Achilles, Akuei
 
 from flask import Flask, render_template
+from scrapedining import get_meal_names
 
 app = Flask(__name__)
 
@@ -16,8 +17,10 @@ def find_meals():
 
 
 @app.route("/meals_list")
-def return_meals():
-    return render_template("meals_list.html")
+def meals_list():
+    hall = "r"
+    meal = "Breakfast"
+    return render_template("meals_list.html", meals=get_meal_names(hall, None, meal))
 
 
 if __name__ == "__main__":

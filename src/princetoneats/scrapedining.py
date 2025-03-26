@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 
 ingredients_page_start = "https://menus.princeton.edu/dining/_Foodpro/online-menu/"
+class_name = "pickmenucoldispname"
 
 
 def get_current_date():
@@ -29,7 +30,14 @@ def map_args(hall, date):
     return hall_url, date_url
 
 
-def scrape_divs(url, class_name):
+def get_details_url(hall, date, meal):
+    return f"https://menus.princeton.edu/dining/_Foodpro/online-menu/pickMenu.asp?locationNum=01&locationName={hall}&dtdate={date}&mealName={meal}&sName=Princeton+University+Campus+Dining"
+
+
+def get_meal_names(hall, date, meal):
+    formatted_hall, formatted_date = map_args(hall, date)
+    # meal doesn't need formatting
+    url = get_details_url(formatted_hall, formatted_date, meal)
     response = requests.get(url)
 
     if response.status_code != 200:
@@ -42,13 +50,15 @@ def scrape_divs(url, class_name):
     # Find all divs with the given class
     divs = soup.find_all("div", class_=class_name)
 
+    names = []
     # Print the HTML content of each div
     for div in divs:
-        print(div.get_text(strip=True), end=" ")
+        names.append(div.get_text(strip=True))
         # Find all <a> tags within the div and print their href attribute
         # for a_tag in div.find_all("a", href=True):
         #     print(ingredients_page_start + a_tag["href"])
-        print()
+
+    return names
 
 
 if __name__ == "__main__":
@@ -58,8 +68,5 @@ if __name__ == "__main__":
     parser.add_argument("--date", required=False, help="Specify the date")
     args = parser.parse_args()
 
-    hall_url, date_url = map_args(args.hall, args.date)
-
-    url = f"https://menus.princeton.edu/dining/_Foodpro/online-menu/pickMenu.asp?locationNum=01&locationName={hall_url}&dtdate={date_url}&mealName={args.meal}&sName=Princeton+University+Campus+Dining"
-    class_name = "pickmenucoldispname"
-    scrape_divs(url, class_name)
+    for name in get_meal_names(args.hall, args.date, args.meal):
+        print(name)

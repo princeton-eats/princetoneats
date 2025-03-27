@@ -9,7 +9,7 @@ Welcome to Princeton Eats.
 First, clone the repository from GitHub to your local machine:
 
 ```bash
-git clone https://github.com/fusuy4/princetoneats.git
+git clone https://github.com/princeton-eats/princetoneats.git
 cd princetoneats
 ```
 
@@ -30,6 +30,11 @@ pip install -r requirements.txt
 
 ```bash
 pre-commit install
+```
+
+### 5. Fetch and checkout the current development version
+```bash
+git checkout -b dev origin/dev
 ```
 
 ## Run the app

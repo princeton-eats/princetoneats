@@ -23,6 +23,24 @@
     height: 80vh;
 }
 
+.container form {
+    float:left;
+}
+.container h4 {
+    margin:0%
+}
+/* #mealForm {
+    float: left;
+}
+
+#dinningHall {
+    float: left;
+}
+
+#meal {
+    float: left;
+} */
+
 /* Preferences Box */
 .preferences-box {
     background-color: #f8c471;

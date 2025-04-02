@@ -1,20 +1,34 @@
 # Created by Yusuf, Adham, Ndongo, Achilles, Akuei
 
 import flask
-from flask import render_template
+import dotenv
+import os
 from scrapedining import get_meal_names
+import auth
+import re
+
+# -----------------------------------------------------------------------
 
 app = flask.Flask(__name__)
+
+dotenv.load_dotenv()
+app.secret_key = os.environ["APP_SECRET_KEY"]
+
+# -----------------------------------------------------------------------
 
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    # check session for user info
+    user_info = flask.session.get("user_info")
+    username = None if user_info is None else user_info["user"]
+
+    return flask.render_template("index.html", username=username)
 
 
 @app.route("/find_meals")
 def find_meals():
-    return render_template("find_meals.html")
+    return flask.render_template("find_meals.html")
 
 
 @app.route("/meals_list", methods=["GET"])
@@ -22,9 +36,39 @@ def meals_list():
     diningHall = flask.request.args.get("DHfilter").split(",")
     mealTimes = flask.request.args.get("MTfilter").split(",")
 
-    return render_template(
+    return flask.render_template(
         "meals_list.html", meals=get_meal_names(diningHall, None, mealTimes[0])
     )
+
+
+# -----------------------------------------------------------------------
+
+
+@app.route("/logincas", methods=["GET"])
+def logincas():
+    # Log in to CAS and redirect home
+    user_info = auth.authenticate()
+    username = user_info["user"]
+    print(username)
+    return flask.redirect(flask.url_for("home"))
+
+
+@app.route("/logoutcas", methods=["GET"])
+def logoutcas():
+    # Log out of the CAS session then redirect home
+    logout_url = (
+        auth._CAS_URL
+        + "logout?service="
+        + auth.urllib.parse.quote(re.sub("logoutcas", "logoutapp", flask.request.url))
+    )
+    flask.abort(flask.redirect(logout_url))
+
+
+@app.route("/logoutapp", methods=["GET"])
+def logoutapp():
+    # Log out of the application and redirect home
+    flask.session.clear()
+    return flask.redirect(flask.url_for("home"))
 
 
 if __name__ == "__main__":

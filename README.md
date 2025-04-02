@@ -37,6 +37,11 @@ pre-commit install
 git checkout -b dev origin/dev
 ```
 
+### 6. Generate a secret key for CAS authentication
+```bash
+python  src/princetoneats/generatecaskey.py
+```
+
 ## Run the app
 
 ```bash

@@ -36,7 +36,7 @@ def meals_list():
     diningHall = flask.request.args.get("DHfilter").split(",")
     mealTimes = flask.request.args.get("MTfilter").split(",")
 
-    return render_template(
+    return flask.render_template(
         "meals_list.html", meals=get_meal_names(diningHall, None, mealTimes[0])
     )
 
@@ -69,7 +69,7 @@ def logoutapp():
     # Log out of the application and redirect home
     flask.session.clear()
     return flask.redirect(flask.url_for("home"))
- 
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=8000)

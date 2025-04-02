@@ -1,10 +1,8 @@
 # Created by Yusuf, Adham, Ndongo, Achilles, Akuei
 
-# from flask import Flask, render_template, session
 import flask
 import dotenv
 import os
-
 from scrapedining import get_meal_names
 import auth
 import re
@@ -33,12 +31,13 @@ def find_meals():
     return flask.render_template("find_meals.html")
 
 
-@app.route("/meals_list")
+@app.route("/meals_list", methods=["GET"])
 def meals_list():
-    hall = "r"
-    meal = "Breakfast"
-    return flask.render_template(
-        "meals_list.html", meals=get_meal_names(hall, None, meal)
+    diningHall = flask.request.args.get("DHfilter").split(",")
+    mealTimes = flask.request.args.get("MTfilter").split(",")
+
+    return render_template(
+        "meals_list.html", meals=get_meal_names(diningHall, None, mealTimes[0])
     )
 
 
@@ -70,7 +69,7 @@ def logoutapp():
     # Log out of the application and redirect home
     flask.session.clear()
     return flask.redirect(flask.url_for("home"))
-
+ 
 
 if __name__ == "__main__":
     app.run(debug=True, port=8000)

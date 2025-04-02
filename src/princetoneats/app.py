@@ -18,9 +18,9 @@ def find_meals():
 
 @app.route("/meals_list")
 def meals_list():
-    hall = "r"
-    meal = "Breakfast"
-    return render_template("meals_list.html", meals=get_meal_names(hall, None, meal))
+    return render_template(
+        "meals_list.html", meals=get_meal_names(["r", "f"], None, "Breakfast")
+    )
 
 
 if __name__ == "__main__":

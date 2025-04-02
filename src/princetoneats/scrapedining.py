@@ -34,29 +34,30 @@ def get_details_url(hall, date, meal):
     return f"https://menus.princeton.edu/dining/_Foodpro/online-menu/pickMenu.asp?locationNum=01&locationName={hall}&dtdate={date}&mealName={meal}&sName=Princeton+University+Campus+Dining"
 
 
-def get_meal_names(hall, date, meal):
-    formatted_hall, formatted_date = map_args(hall, date)
-    # meal doesn't need formatting
-    url = get_details_url(formatted_hall, formatted_date, meal)
-    response = requests.get(url)
-
-    if response.status_code != 200:
-        print(f"Failed to retrieve page, status code: {response.status_code}")
-        return
-
-    # Parse the HTML content
-    soup = BeautifulSoup(response.text, "html.parser")
-
-    # Find all divs with the given class
-    divs = soup.find_all("div", class_=class_name)
-
+def get_meal_names(halls, date, meal):
     names = []
-    # Print the HTML content of each div
-    for div in divs:
-        names.append(div.get_text(strip=True))
-        # Find all <a> tags within the div and print their href attribute
-        # for a_tag in div.find_all("a", href=True):
-        #     print(ingredients_page_start + a_tag["href"])
+    for hall in halls:
+        formatted_hall, formatted_date = map_args(hall, date)
+        # meal doesn't need formatting
+        url = get_details_url(formatted_hall, formatted_date, meal)
+        response = requests.get(url)
+
+        if response.status_code != 200:
+            print(f"Failed to retrieve page, status code: {response.status_code}")
+            return
+
+        # Parse the HTML content
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        # Find all divs with the given class
+        divs = soup.find_all("div", class_=class_name)
+
+        # Print the HTML content of each div
+        for div in divs:
+            names.append(div.get_text(strip=True))
+            # Find all <a> tags within the div and print their href attribute
+            # for a_tag in div.find_all("a", href=True):
+            #     print(ingredients_page_start + a_tag["href"])
 
     return names
 

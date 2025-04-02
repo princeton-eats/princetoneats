@@ -6,10 +6,12 @@ import dotenv
 import os
 
 from scrapedining import get_meal_names
+import auth
+import re
 
 # -----------------------------------------------------------------------
 
-from top import app
+app = flask.Flask(__name__)
 
 dotenv.load_dotenv()
 app.secret_key = os.environ["APP_SECRET_KEY"]
@@ -38,6 +40,36 @@ def meals_list():
     return flask.render_template(
         "meals_list.html", meals=get_meal_names(hall, None, meal)
     )
+
+
+# -----------------------------------------------------------------------
+
+
+@app.route("/logincas", methods=["GET"])
+def logincas():
+    # Log in to CAS and redirect home
+    user_info = auth.authenticate()
+    username = user_info["user"]
+    print(username)
+    return flask.redirect(flask.url_for("home"))
+
+
+@app.route("/logoutcas", methods=["GET"])
+def logoutcas():
+    # Log out of the CAS session then redirect home
+    logout_url = (
+        auth._CAS_URL
+        + "logout?service="
+        + auth.urllib.parse.quote(re.sub("logoutcas", "logoutapp", flask.request.url))
+    )
+    flask.abort(flask.redirect(logout_url))
+
+
+@app.route("/logoutapp", methods=["GET"])
+def logoutapp():
+    # Log out of the application and redirect home
+    flask.session.clear()
+    return flask.redirect(flask.url_for("home"))
 
 
 if __name__ == "__main__":

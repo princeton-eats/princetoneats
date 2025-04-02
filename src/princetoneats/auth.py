@@ -14,8 +14,6 @@ import re
 import json
 import flask
 
-from top import app
-
 # -----------------------------------------------------------------------
 
 _CAS_URL = "https://fed.princeton.edu/cas/"
@@ -112,39 +110,3 @@ def authenticate():
 
 def is_authenticated():
     return "user_info" in flask.session
-
-
-# -----------------------------------------------------------------------
-
-
-@app.route("/logincas")
-def logincas():
-    # Log in to CAS and redirect home
-    user_info = authenticate()
-    username = user_info["user"]
-    print(username)
-    return flask.redirect(flask.url_for("home"))
-
-
-# -----------------------------------------------------------------------
-
-
-@app.route("/logoutcas", methods=["GET"])
-def logoutcas():
-    # Log out of the CAS session then redirect home
-    logout_url = (
-        _CAS_URL
-        + "logout?service="
-        + urllib.parse.quote(re.sub("logoutcas", "logoutapp", flask.request.url))
-    )
-    flask.abort(flask.redirect(logout_url))
-
-
-# -----------------------------------------------------------------------
-
-
-@app.route("/logoutapp", methods=["GET"])
-def logoutapp():
-    # Log out of the application and redirect home
-    flask.session.clear()
-    return flask.redirect(flask.url_for("home"))

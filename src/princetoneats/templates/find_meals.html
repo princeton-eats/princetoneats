@@ -47,12 +47,12 @@
                     <label><input type="checkbox" name="MTfilter" value="Lunch"> Lunch</label>
                     <label><input type="checkbox" name="MTfilter" value="Dinner"> Dinner</label>
 
-                    <input type="submit" id="submitButton" value="Save" style="margin-top: 5px; margin-left: 65px;">
+                    <!-- <input type="submit" id="submitButton" value="Save" style="margin-top: 5px; margin-left: 65px;"> -->
                 </div>
             </form>
 
             <div class="buttons">
-                <button onclick="location.href='/meals_list?{{DH + MT}}'">Enter</button>
+                <button id="enterButton">Enter</button>
                 <button onclick="location.href='/'">Back</button>
             </div>
         </div>
@@ -62,5 +62,20 @@
         <p>Made by <span class="names">Achilles, Adham, Akuei, Ndongo, and Yusuf</span></p>
     </footer>
 
+    <script>
+        document.getElementById("enterButton").addEventListener("click", function() {
+            let form = document.getElementById("dinningHall");
+            let formData = new FormData(form);
+
+            let DH = [];
+            let MT = [];
+
+            formData.getAll("DHfilter").forEach(value => DH.push(value));
+            formData.getAll("MTfilter").forEach(value => MT.push(value));
+
+            let queryString = `?DHfilter=${DH.join(",")}&MTfilter=${MT.join(",")}`;
+            window.location.href = "/meals_list" + queryString;
+        });
+    </script>
 </body>
 </html>

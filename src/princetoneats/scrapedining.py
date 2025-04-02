@@ -39,6 +39,8 @@ def get_details_url(hall, date, meal):
 def get_meal_names(halls, date, meal):
     names = []
     for hall in halls:
+        # temporary: to separate dhalls
+        names.append("--" + hall + "--")
         formatted_hall, formatted_date = map_args(hall, date)
         # meal doesn't need formatting
         url = get_details_url(formatted_hall, formatted_date, meal)

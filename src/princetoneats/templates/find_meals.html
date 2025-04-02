@@ -41,20 +41,18 @@
                     <label><input type="checkbox" name="DHfilter" value="Roma"> Rocky-Mathey College</label>
                     <label><input type="checkbox" name="DHfilter" value="WB"> Whitman-Butler College</label>
                     <label><input type="checkbox" name="DHfilter" value="YN"> Yeh-New College West</label>
-                </div>
-            </form>
 
-            <form id="meal">
-                <div class="checkbox-group">
                     <h4>Select Meal Time</h4>
                     <label><input type="checkbox" name="MTfilter" value="Breakfast"> Breakfast</label>
                     <label><input type="checkbox" name="MTfilter" value="Lunch"> Lunch</label>
                     <label><input type="checkbox" name="MTfilter" value="Dinner"> Dinner</label>
+
+                    <input type="submit" id="submitButton" value="Save" style="margin-top: 5px; margin-left: 65px;">
                 </div>
             </form>
 
             <div class="buttons">
-                <button onclick="location.href='/meals_list'">Enter</button>
+                <button onclick="location.href='/meals_list?{{DH + MT}}'">Enter</button>
                 <button onclick="location.href='/'">Back</button>
             </div>
         </div>

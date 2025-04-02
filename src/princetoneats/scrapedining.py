@@ -13,13 +13,13 @@ def get_current_date():
 
 
 def map_args(hall, date):
-    if hall == "r" or hall == "rocky":
+    if hall == "r" or hall == "Roma":
         hall_url = "+Rockefeller+%26+Mathey+Colleges"
-    elif hall == "f" or hall == "forbes":
+    elif hall == "f" or hall == "Forbes":
         hall_url = "Forbes+College"
-    elif hall == "w" or hall == "whitman":
+    elif hall == "w" or hall == "WB":
         hall_url = "Whitman+College+%26+Butler+College"
-    elif hall == "y" or hall == "yeh":
+    elif hall == "y" or hall == "YN":
         hall_url = "Yeh+College+%26+New+College+West"
 
     if date is None:
@@ -32,11 +32,15 @@ def map_args(hall, date):
 
 def get_details_url(hall, date, meal):
     return f"https://menus.princeton.edu/dining/_Foodpro/online-menu/pickMenu.asp?locationNum=01&locationName={hall}&dtdate={date}&mealName={meal}&sName=Princeton+University+Campus+Dining"
+    # meal, use capital first letter
+    # no unneded 0's in date
 
 
 def get_meal_names(halls, date, meal):
     names = []
     for hall in halls:
+        # temporary: to separate dhalls
+        names.append("--" + hall + "--")
         formatted_hall, formatted_date = map_args(hall, date)
         # meal doesn't need formatting
         url = get_details_url(formatted_hall, formatted_date, meal)

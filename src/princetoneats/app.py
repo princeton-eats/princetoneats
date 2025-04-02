@@ -1,9 +1,10 @@
 # Created by Yusuf, Adham, Ndongo, Achilles, Akuei
 
-from flask import Flask, render_template
+import flask
+from flask import render_template
 from scrapedining import get_meal_names
 
-app = Flask(__name__)
+app = flask.Flask(__name__)
 
 
 @app.route("/")
@@ -16,10 +17,13 @@ def find_meals():
     return render_template("find_meals.html")
 
 
-@app.route("/meals_list")
+@app.route("/meals_list", methods=["GET"])
 def meals_list():
+    diningHall = flask.request.args.get("DHfilter").split(",")
+    mealTimes = flask.request.args.get("MTfilter").split(",")
+
     return render_template(
-        "meals_list.html", meals=get_meal_names(["r", "f"], None, "Breakfast")
+        "meals_list.html", meals=get_meal_names(diningHall, None, mealTimes[0])
     )
 
 

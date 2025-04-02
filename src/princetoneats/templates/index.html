@@ -11,6 +11,12 @@
         <h1>Princeton Eats!</h1>
     </div>
 
+    <p>{% if username %}
+        Welcome {{username}}
+        {% else %}
+        You are not signed in
+        {% endif %}</p>
+
     <div class="container">
         <p class="intro"><strong>Imagine this...</strong></p>
         <hr class="line">
@@ -28,7 +34,10 @@
 
         <div class="buttons">
             <button onclick="location.href='/find_meals'">FIND MEALS</button>
-            <button onclick="location.href='/signin'">SIGN IN</button>
+
+            <button onclick="location.href='{% if username %}/logoutcas{% else %}/logincas{% endif %}'">
+                SIGN {% if username %}OUT{% else %}IN{% endif %}
+              </button>
         </div>
     </div>
 

@@ -14,7 +14,7 @@ import re
 import json
 import flask
 
-from app import app
+from top import app
 
 # -----------------------------------------------------------------------
 
@@ -117,13 +117,13 @@ def is_authenticated():
 # -----------------------------------------------------------------------
 
 
-@app.route("/logoutapp", methods=["GET"])
-def logoutapp():
-    # Log out of the application.
-    flask.session.clear()
-    html_code = flask.render_template("loggedout.html")
-    response = flask.make_response(html_code)
-    return response
+@app.route("/logincas")
+def logincas():
+    # Log in to CAS and redirect home
+    user_info = authenticate()
+    username = user_info["user"]
+    print(username)
+    return flask.redirect(flask.url_for("home"))
 
 
 # -----------------------------------------------------------------------
@@ -131,10 +131,20 @@ def logoutapp():
 
 @app.route("/logoutcas", methods=["GET"])
 def logoutcas():
-    # Log out of the CAS session, and then the application.
+    # Log out of the CAS session then redirect home
     logout_url = (
         _CAS_URL
         + "logout?service="
         + urllib.parse.quote(re.sub("logoutcas", "logoutapp", flask.request.url))
     )
     flask.abort(flask.redirect(logout_url))
+
+
+# -----------------------------------------------------------------------
+
+
+@app.route("/logoutapp", methods=["GET"])
+def logoutapp():
+    # Log out of the application and redirect home
+    flask.session.clear()
+    return flask.redirect(flask.url_for("home"))

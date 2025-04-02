@@ -6,11 +6,10 @@ import dotenv
 import os
 
 from scrapedining import get_meal_names
-import auth
 
 # -----------------------------------------------------------------------
 
-app = flask.Flask(__name__)
+from top import app
 
 dotenv.load_dotenv()
 app.secret_key = os.environ["APP_SECRET_KEY"]
@@ -20,7 +19,11 @@ app.secret_key = os.environ["APP_SECRET_KEY"]
 
 @app.route("/")
 def home():
-    return flask.render_template("index.html")
+    # check session for user info
+    user_info = flask.session.get("user_info")
+    username = None if user_info is None else user_info["user"]
+
+    return flask.render_template("index.html", username=username)
 
 
 @app.route("/find_meals")
@@ -35,14 +38,6 @@ def meals_list():
     return flask.render_template(
         "meals_list.html", meals=get_meal_names(hall, None, meal)
     )
-
-
-@app.route("/signin")
-def sign_in():
-    user_info = auth.authenticate()
-    username = user_info["user"]
-    print(username)
-    return flask.redirect(flask.url_for("home"))
 
 
 if __name__ == "__main__":

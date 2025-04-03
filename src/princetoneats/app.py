@@ -36,9 +36,12 @@ def meals_list():
     diningHall = flask.request.args.get("DHfilter").split(",")
     mealTimes = flask.request.args.get("MTfilter").split(",")
 
-    meals = map(str, get_meal_info(diningHall, None, mealTimes[0]))
+    mealsDict = get_meal_info(diningHall, None, mealTimes[0])
+    print(mealsDict[0]["dhall"])
 
-    return flask.render_template("meals_list.html", meals=meals)
+    # meals = map(str, get_meal_info(diningHall, None, mealTimes[0]))
+
+    return flask.render_template("meals_list.html", mealsDict=mealsDict, currDH="")
 
 
 # -----------------------------------------------------------------------

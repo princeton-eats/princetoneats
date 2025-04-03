@@ -15,7 +15,7 @@
         </div>
     </nav>
 
-    <div class="container">
+    <!-- <div class="container">
         <h2>Here are Your Options</h2>
         <div id="mealResults">
             <ul>
@@ -24,7 +24,49 @@
                 {% endfor %}
             </ul>
         </div>
+    </div> -->
+    {% set currDH = "" %}
+    <div class="container">
+        <h2>Here are Your Options</h2>
+        <ul>
+        {% for mealNum in mealsDict %}
+            {% if currDH != mealNum["dhall"] %}
+                <h3>{{ mealNum["dhall"] }}</h3>
+                {% set currDH = mealNum["dhall"] %}
+                {% endif %}
+
+            <li>{{ mealNum["name:"] }}</li>
+            <h4>Ingredients are</h4>
+                <ul>
+                    {% for ingredient in mealNum["ingredients"] %}
+                    <li> {{ ingredient }}</li>
+                    {% endfor %}
+                </ul>
+            <h4>Allergens are</h4>
+                <ul>
+                    {% for allergen in mealNum["allergens"] %}
+                    <li> {{ allergen }}</li>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+        </ul>
+
+        <!-- <div id="mealResults">
+            <ul>
+                {% for meal_name in meals %}
+                    <li>{{ meal_name }}</li>
+                {% endfor %}
+            </ul>
+        </div> -->
     </div>
+
+    <!-- currDH = ""
+    for meal in mealsDict:
+        if currDH != mealsDict[meal]["dhall"]:
+            # create new header and set currDH to mealsDict[meal]["dhall"]
+        # print mealname  mealsDict[meal]["name"]
+        # print ingredients mealsDict[meal]["ingredients"]
+        # print allergens -->
 
     <div class="containerSmall">
         <h2>REMEMBER!</h2>

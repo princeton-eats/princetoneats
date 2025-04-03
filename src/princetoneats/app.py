@@ -3,7 +3,7 @@
 import flask
 import dotenv
 import os
-from scrapedining import get_meal_names
+from scrapedining import get_meal_info
 import auth
 import re
 
@@ -36,9 +36,9 @@ def meals_list():
     diningHall = flask.request.args.get("DHfilter").split(",")
     mealTimes = flask.request.args.get("MTfilter").split(",")
 
-    return flask.render_template(
-        "meals_list.html", meals=get_meal_names(diningHall, None, mealTimes[0])
-    )
+    meals = map(str, get_meal_info(diningHall, None, mealTimes[0]))
+
+    return flask.render_template("meals_list.html", meals=meals)
 
 
 # -----------------------------------------------------------------------

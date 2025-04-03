@@ -32,15 +32,47 @@ def map_args(hall, date):
 
 def get_details_url(hall, date, meal):
     return f"https://menus.princeton.edu/dining/_Foodpro/online-menu/pickMenu.asp?locationNum=01&locationName={hall}&dtdate={date}&mealName={meal}&sName=Princeton+University+Campus+Dining"
-    # meal, use capital first letter
-    # no unneded 0's in date
 
 
-def get_meal_names(halls, date, meal):
-    names = []
+def get_ingredients_and_allergens(url):
+    """Scrape both ingredients and allergens from a meal's detail page, filtering out default disclaimers."""
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+
+        soup = BeautifulSoup(response.text, "html.parser")
+        all_text = soup.get_text()
+
+        ingredients = "No ingredients found"
+        allergens = "No allergens listed"
+
+        if "INGREDIENTS:" in all_text.upper():
+            ingredient_section = all_text.split("INGREDIENTS:", 1)[1]
+            if "ALLERGENS:" in ingredient_section.upper():
+                ingredient_section, allergen_section = ingredient_section.split(
+                    "ALLERGENS:", 1
+                )
+                ingredients = ingredient_section.strip()
+                allergens_raw = allergen_section.strip().split("\n")[0]
+
+                # Filter out Princeton Dining's default disclaimer
+                if "committed to providing" in allergens_raw.lower():
+                    allergens = "No allergens listed"
+                else:
+                    allergens = allergens_raw
+            else:
+                ingredients = ingredient_section.strip()
+
+        return ingredients, allergens
+
+    except Exception as e:
+        return f"Error retrieving ingredients: {e}", ""
+
+
+def get_meal_info(halls, date, meal):
+    meals = []
     for hall in halls:
         # temporary: to separate dhalls
-        names.append("--" + hall + "--")
         formatted_hall, formatted_date = map_args(hall, date)
         # meal doesn't need formatting
         url = get_details_url(formatted_hall, formatted_date, meal)
@@ -58,12 +90,32 @@ def get_meal_names(halls, date, meal):
 
         # Print the HTML content of each div
         for div in divs:
-            names.append(div.get_text(strip=True))
+            name = div.get_text(strip=True)
             # Find all <a> tags within the div and print their href attribute
-            # for a_tag in div.find_all("a", href=True):
-            #     print(ingredients_page_start + a_tag["href"])
+            a_tag = div.find("a", href=True)
+            details_url = ingredients_page_start + a_tag["href"]
+            ingredients, allergens = get_ingredients_and_allergens(details_url)
+            ingredients_list = (
+                [item.strip() for item in ingredients.split(",") if item.strip()]
+                if ingredients != "No ingredients found"
+                else []
+            )
 
-    return names
+            allergens_list = (
+                [item.strip() for item in allergens.split(",") if item.strip()]
+                if allergens != "No allergens listed"
+                else []
+            )
+            meals.append(
+                {
+                    "dhall": hall,
+                    "name:": name,
+                    "ingredients": ingredients_list,
+                    "allergens": allergens_list,
+                }
+            )
+
+    return meals
 
 
 if __name__ == "__main__":
@@ -73,5 +125,5 @@ if __name__ == "__main__":
     parser.add_argument("--date", required=False, help="Specify the date")
     args = parser.parse_args()
 
-    for name in get_meal_names(args.hall, args.date, args.meal):
-        print(name)
+    for info in get_meal_info(args.hall, args.date, args.meal):
+        print(info)

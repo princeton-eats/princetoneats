@@ -21,6 +21,10 @@ def map_args(hall, date):
         hall_url = "Whitman+College+%26+Butler+College"
     elif hall == "y" or hall == "YN":
         hall_url = "Yeh+College+%26+New+College+West"
+    elif hall == "c" or hall == "CJL":
+        hall_url = "Center+for+Jewish+Life"
+    elif hall == "g" or "Grad":
+        hall_url = "Graduate+College"
 
     if date is None:
         date_url = get_current_date()

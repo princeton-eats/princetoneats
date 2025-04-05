@@ -19,7 +19,8 @@
         <div class="preferences-box">
             <h2>Select Your Preferences</h2>
             <hr class="line">
-            <form id="mealForm">
+
+            <form id="allergensForm">
                 <div class="checkbox-group">
                     <h4>Select Restrictions</h4>
                     <label><input type="checkbox" name="ARfilter" value="vegan"> Vegan</label>
@@ -32,7 +33,7 @@
                 </div>
             </form>
 
-            <form id="dinningHall">
+            <form id="diningHallFrom">
                 <div class="checkbox-group">
                     <h4>Select Dinning Hall</h4>
                     <label><input type="checkbox" name="DHfilter" value="CJL">Center for Jewish Life</label>
@@ -41,13 +42,15 @@
                     <label><input type="checkbox" name="DHfilter" value="Roma"> Rocky-Mathey College</label>
                     <label><input type="checkbox" name="DHfilter" value="WB"> Whitman-Butler College</label>
                     <label><input type="checkbox" name="DHfilter" value="YN"> Yeh-New College West</label>
+                </div>
+            </form>
 
+            <form id="mealTimeForm">
+                <div class="checkbox-group">
                     <h4>Select Meal Time</h4>
                     <label><input type="checkbox" name="MTfilter" value="Breakfast"> Breakfast</label>
                     <label><input type="checkbox" name="MTfilter" value="Lunch"> Lunch</label>
                     <label><input type="checkbox" name="MTfilter" value="Dinner"> Dinner</label>
-
-                    <!-- <input type="submit" id="submitButton" value="Save" style="margin-top: 5px; margin-left: 65px;"> -->
                 </div>
             </form>
 
@@ -55,6 +58,10 @@
                 <button id="enterButton">Enter</button>
                 <button onclick="location.href='/'">Back</button>
             </div>
+
+            <hr class="line">
+
+            <h4 id="errorHandling" style="color: black; text-align: center;">Please select at least one dining hall and one meal time.</h4>
         </div>
     </div>
 
@@ -64,17 +71,44 @@
 
     <script>
         document.getElementById("enterButton").addEventListener("click", function() {
-            let form = document.getElementById("dinningHall");
-            let formData = new FormData(form);
+            let formDHF = document.getElementById("diningHallFrom");
+            let formMTF = document.getElementById("mealTimeForm");
+            // let formAF = document.getElementById("allergensForm");
+
+
+            let formDataDHF = new FormData(formDHF);
+            let formDataMTF = new FormData(formMTF);
+            // let formDataAF = new FormData(formAF);
 
             let DH = [];
             let MT = [];
+            // let AR = [];
 
-            formData.getAll("DHfilter").forEach(value => DH.push(value));
-            formData.getAll("MTfilter").forEach(value => MT.push(value));
+            formDataDHF.getAll("DHfilter").forEach(value => DH.push(value));
+            formDataMTF.getAll("MTfilter").forEach(value => MT.push(value));
+            // formDataMTF.getAll("ARfilter").forEach(value => AR.push(value));
 
-            let queryString = `?DHfilter=${DH.join(",")}&MTfilter=${MT.join(",")}`;
-            window.location.href = "/meals_list" + queryString;
+            let errorMessage = "";
+
+            if (DH.length === 0) {
+                errorMessage += "Please select at least one dining hall. ";
+            }
+            if (MT.length === 0) {
+                errorMessage += "Please select a meal time.";
+            }
+            if (MT.length > 1) {
+                errorMessage += "Please select only one meal time.";
+            }
+
+            if (errorMessage.length != 0) {
+               let errorBox = document.getElementById('errorHandling');
+               errorBox.innerText = errorMessage;
+               errorBox.style.color = 'red';
+            }
+            else {
+                let queryString = `?DHfilter=${DH.join(",")}&MTfilter=${MT.join(",")}`;
+                window.location.href = "/meals_list" + queryString;
+            }
         });
     </script>
 </body>

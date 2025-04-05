@@ -5,7 +5,9 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 
 ingredients_page_start = "https://menus.princeton.edu/dining/_Foodpro/online-menu/"
-class_name = "pickmenucoldispname"
+meal_class_name = "pickmenucoldispname"
+ingredients_class_name = "labelingredientsvalue"
+allergens_class_name = "labelallergensvalue"
 
 
 def get_current_date():
@@ -13,6 +15,7 @@ def get_current_date():
 
 
 def map_args(hall, date):
+    """Format the hall and date for the URL."""
     if hall == "r" or hall == "Roma":
         hall_url = "+Rockefeller+%26+Mathey+Colleges"
         location_num = 1
@@ -33,15 +36,15 @@ def map_args(hall, date):
         location_num = 4
 
     if date is None:
-        date_url = get_current_date()
-    else:
-        date_url = "%2F".join(date.split("/"))
+        date = get_current_date()
+    date_url = "%2F".join(date.split("/"))
 
     return hall_url, date_url, location_num
 
 
-def get_details_url(hall, date, meal, location_num):
-    return f"https://menus.princeton.edu/dining/_Foodpro/online-menu/pickMenu.asp?locationNum=0{location_num}&locationName={hall}&dtdate={date}&mealName={meal}&sName=Princeton+University+Campus+Dining"
+def get_details_url(formatted_hall, formatted_date, formatted_meal, location_num):
+    """Generate the Dining Menus URL for the page with this information. Requires inputs to be formatted to their URL equivalent."""
+    return f"https://menus.princeton.edu/dining/_Foodpro/online-menu/pickMenu.asp?locationNum=0{location_num}&locationName={formatted_hall}&dtdate={formatted_date}&mealName={formatted_meal}&sName=Princeton+University+Campus+Dining"
 
 
 def get_ingredients_and_allergens(url):
@@ -51,27 +54,16 @@ def get_ingredients_and_allergens(url):
         response.raise_for_status()
 
         soup = BeautifulSoup(response.text, "html.parser")
-        all_text = soup.get_text()
+        ingredients_span = soup.find("span", class_=ingredients_class_name)
+        ingredients = ingredients_span.get_text().split(",")
+        if len(ingredients) == 0:
+            ingredients[0] = "No ingredients found"
 
-        ingredients = "No ingredients found"
-        allergens = "No allergens listed"
-
-        if "INGREDIENTS:" in all_text.upper():
-            ingredient_section = all_text.split("INGREDIENTS:", 1)[1]
-            if "ALLERGENS:" in ingredient_section.upper():
-                ingredient_section, allergen_section = ingredient_section.split(
-                    "ALLERGENS:", 1
-                )
-                ingredients = ingredient_section.strip()
-                allergens_raw = allergen_section.strip().split("\n")[0]
-
-                # Filter out Princeton Dining's default disclaimer
-                if "committed to providing" in allergens_raw.lower():
-                    allergens = "No allergens listed"
-                else:
-                    allergens = allergens_raw
-            else:
-                ingredients = ingredient_section.strip()
+        allergens_span = soup.find("span", class_=allergens_class_name)
+        allergens = allergens_span.get_text().split(",")
+        print(allergens)
+        if len(allergens[0]) == 0:
+            allergens[0] = "No allergens listed"
 
         return ingredients, allergens
 
@@ -80,10 +72,12 @@ def get_ingredients_and_allergens(url):
 
 
 def get_meal_info(halls, date, meal):
+    """Return a list of dictionaries containing meal information. Each meal
+    consists of {'dhall':, 'name': , 'ingredients:', 'allergens:'}."""
     meals = []
     for hall in halls:
-        # temporary: to separate dhalls
         formatted_hall, formatted_date, location_num = map_args(hall, date)
+
         # meal doesn't need formatting
         url = get_details_url(formatted_hall, formatted_date, meal, location_num)
 
@@ -97,33 +91,23 @@ def get_meal_info(halls, date, meal):
         # Parse the HTML content
         soup = BeautifulSoup(response.text, "html.parser")
 
-        # Find all divs with the given class
-        divs = soup.find_all("div", class_=class_name)
+        # Find all divs with the meal names.
+        divs = soup.find_all("div", class_=meal_class_name)
 
-        # Print the HTML content of each div
         for div in divs:
             name = div.get_text(strip=True)
-            # Find all <a> tags within the div and print their href attribute
+            # Find all <a> tags within the divs and print their href attribute
             a_tag = div.find("a", href=True)
             details_url = ingredients_page_start + a_tag["href"]
-            ingredients, allergens = get_ingredients_and_allergens(details_url)
-            ingredients_list = (
-                [item.strip() for item in ingredients.split(",") if item.strip()]
-                if ingredients != "No ingredients found"
-                else []
-            )
 
-            allergens_list = (
-                [item.strip() for item in allergens.split(",") if item.strip()]
-                if allergens != "No allergens listed"
-                else []
-            )
+            ingredients, allergens = get_ingredients_and_allergens(details_url)
+
             meals.append(
                 {
                     "dhall": hall,
                     "name:": name,
-                    "ingredients": ingredients_list,
-                    "allergens": allergens_list,
+                    "ingredients": ingredients,
+                    "allergens": allergens,
                 }
             )
 

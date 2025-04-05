@@ -27,29 +27,33 @@
     </div> -->
     {% set currDH = "" %}
     <div class="container">
-        <h2>Here are Your Options</h2>
-        <ul>
-        {% for mealNum in mealsDict %}
-            {% if currDH != mealNum["dhall"] %}
-                <h3>{{ mealNum["dhall"] }}</h3>
-                {% set currDH = mealNum["dhall"] %}
-                {% endif %}
+        {% if mealsDict|length == 0 %}
+            <p>Today is a weekend, please search for lunch options instead.</p>
+        {% else %}
+            <h2>Here are Your Options</h2>
+            <ul>
+            {% for mealNum in mealsDict %}
+                {% if currDH != mealNum["dhall"] %}
+                    <h3>{{ mealNum["dhall"] }}</h3>
+                    {% set currDH = mealNum["dhall"] %}
+                    {% endif %}
 
-            <li>{{ mealNum["name:"] }}</li>
-            <h4>Ingredients are</h4>
-                <ul>
-                    {% for ingredient in mealNum["ingredients"] %}
-                    <li> {{ ingredient }}</li>
-                    {% endfor %}
-                </ul>
-            <h4>Allergens are</h4>
-                <ul>
-                    {% for allergen in mealNum["allergens"] %}
-                    <li> {{ allergen }}</li>
-                    {% endfor %}
-                </ul>
-            {% endfor %}
-        </ul>
+                <li>{{ mealNum["name:"] }}</li>
+                <h4>Ingredients are</h4>
+                    <ul>
+                        {% for ingredient in mealNum["ingredients"] %}
+                        <li> {{ ingredient }}</li>
+                        {% endfor %}
+                    </ul>
+                <h4>Allergens are</h4>
+                    <ul>
+                        {% for allergen in mealNum["allergens"] %}
+                        <li> {{ allergen }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+            </ul>
+        {% endif %}
 
         <!-- <div id="mealResults">
             <ul>

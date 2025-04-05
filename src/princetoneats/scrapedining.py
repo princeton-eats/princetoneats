@@ -15,27 +15,33 @@ def get_current_date():
 def map_args(hall, date):
     if hall == "r" or hall == "Roma":
         hall_url = "+Rockefeller+%26+Mathey+Colleges"
+        location_num = 1
     elif hall == "f" or hall == "Forbes":
         hall_url = "Forbes+College"
+        location_num = 3
     elif hall == "w" or hall == "WB":
         hall_url = "Whitman+College+%26+Butler+College"
+        location_num = 8
     elif hall == "y" or hall == "YN":
         hall_url = "Yeh+College+%26+New+College+West"
+        location_num = 6
     elif hall == "c" or hall == "CJL":
         hall_url = "Center+for+Jewish+Life"
+        location_num = 5
     elif hall == "g" or "Grad":
         hall_url = "Graduate+College"
+        location_num = 4
 
     if date is None:
         date_url = get_current_date()
     else:
         date_url = "%2F".join(date.split("/"))
 
-    return hall_url, date_url
+    return hall_url, date_url, location_num
 
 
-def get_details_url(hall, date, meal):
-    return f"https://menus.princeton.edu/dining/_Foodpro/online-menu/pickMenu.asp?locationNum=01&locationName={hall}&dtdate={date}&mealName={meal}&sName=Princeton+University+Campus+Dining"
+def get_details_url(hall, date, meal, location_num):
+    return f"https://menus.princeton.edu/dining/_Foodpro/online-menu/pickMenu.asp?locationNum=0{location_num}&locationName={hall}&dtdate={date}&mealName={meal}&sName=Princeton+University+Campus+Dining"
 
 
 def get_ingredients_and_allergens(url):
@@ -77,9 +83,11 @@ def get_meal_info(halls, date, meal):
     meals = []
     for hall in halls:
         # temporary: to separate dhalls
-        formatted_hall, formatted_date = map_args(hall, date)
+        formatted_hall, formatted_date, location_num = map_args(hall, date)
         # meal doesn't need formatting
-        url = get_details_url(formatted_hall, formatted_date, meal)
+        url = get_details_url(formatted_hall, formatted_date, meal, location_num)
+
+        print(url)
         response = requests.get(url)
 
         if response.status_code != 200:

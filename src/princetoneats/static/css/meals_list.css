@@ -1,39 +1,6 @@
-/* General Styles */
-body {
-   font-family: Arial, sans-serif;
-   margin: 0;
-   padding: 0;
-   background-color: #f5d08e;
-   text-align: center;
-}
-
-/* Navbar */
-.navbar {
-   background-color: #e87722;
-   padding: 15px;
-   color: white;
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   padding: 15px 40px;
-   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.nav-links {
-   display: flex;
-}
-
-.nav-links a {
-   color: white;
-   text-decoration: none;
-   margin-left: 15px;
-   font-weight: bold;
-}
-
-/* Page Content */
-.container {
+.containerMeals {
    max-width: 700px;
-   margin: 60px auto;
+   margin: 20px auto;
    background-color: #f8c471;
    padding: 30px;
    border-radius: 10px;
@@ -51,7 +18,7 @@ body {
 }
 
 /* Meal Results */
-#mealResults {
+#warning {
    margin-top: 20px;
    font-size: 18px;
    font-weight: bold;
@@ -61,6 +28,33 @@ body {
    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
    text-align: left;
 }
+
+/* Dropdown for Ingredents and Allergens */
+.dropdown {
+   position: relative;
+   display: inline-block;
+   text-decoration-line: underline;
+ }
+
+ .dropdown-content {
+   display: none;
+   position: absolute;
+   background-color: #f9f9f9;
+   min-width: 160px;
+   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+   padding: 12px 16px;
+   border-radius: 8px;
+   z-index: 1;
+ }
+
+
+ .dropdown-content li {
+   padding: 4px;
+ }
+
+ .dropdown:hover .dropdown-content {
+   display: block;
+ }
 
 /* Button Fix */
 button {
@@ -78,15 +72,4 @@ button {
 
 button:hover {
    background-color: #0e5e2d;
-}
-
-/* Footer */
-footer {
-   text-align: center;
-   padding: 15px;
-   background-color: #e87722;
-   color: white;
-   position: fixed;
-   bottom: 0;
-   width: 100%;
 }

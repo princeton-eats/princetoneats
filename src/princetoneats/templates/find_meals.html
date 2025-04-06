@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Find Meals - Princeton Eats</title>
-    <link rel="stylesheet" href="/static/css/find_meals.css">
+    <link rel="stylesheet" href="static/css/styles.css">
 </head>
 <body>
     <nav class="navbar">
         <h1 class="logo">Princeton Eats</h1>
         <div class="nav-links">
             <a href="/">Home</a>
-            <a href="#">Sign In</a>
+            <a href="/">Sign In</a> <!-- Needs to be linked to CAS -->
         </div>
     </nav>
 
@@ -48,9 +48,9 @@
             <form id="mealTimeForm">
                 <div class="checkbox-group">
                     <h4>Select Meal Time</h4>
-                    <label><input type="checkbox" name="MTfilter" value="Breakfast"> Breakfast</label>
-                    <label><input type="checkbox" name="MTfilter" value="Lunch"> Lunch</label>
-                    <label><input type="checkbox" name="MTfilter" value="Dinner"> Dinner</label>
+                    <label><input type="radio" name="MTfilter" value="Breakfast"> Breakfast</label>
+                    <label><input type="radio" name="MTfilter" value="Lunch"> Lunch</label>
+                    <label><input type="radio" name="MTfilter" value="Dinner"> Dinner</label>
                 </div>
             </form>
 
@@ -66,7 +66,10 @@
     </div>
 
     <footer>
-        <p>Made by <span class="names">Achilles, Adham, Akuei, Ndongo, and Yusuf</span></p>
+        <p>&copy; COS 333 Final Project</p>
+        <p>
+            Made by <span class="names">Achilles, Adham, Akuei, Ndongo, and Yusuf</span>
+        </p>
     </footer>
 
     <script>

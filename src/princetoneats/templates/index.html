@@ -4,18 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Princeton Eats</title>
-    <link rel="stylesheet" href="static/css/index.css">
+    <!-- <link rel="stylesheet" href="static/css/index.css"> -->
+    <link rel="stylesheet" href="static/css/styles.css">
 </head>
 <body>
-    <div class="header">
-        <h1>Princeton Eats!</h1>
-    </div>
+    <nav class="navbar">
+        <h1 class="logo">Princeton Eats</h1>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/">Sign In</a> <!-- Needs to be linked to CAS -->
+        </div>
+    </nav>
 
-    <p>{% if username %}
+    <h2>{% if username %}
         Welcome {{username}}
         {% else %}
         You are not signed in
-        {% endif %}</p>
+        {% endif %}</h2>
 
     <div class="container">
         <p class="intro"><strong>Imagine this...</strong></p>
@@ -42,8 +47,10 @@
     </div>
 
     <footer>
-        <p>Made By Achilles, Adham, Akuei, Ndongo, and Yusuf</p>
+        <p>&copy; COS 333 Final Project</p>
+        <p>
+            Made by <span class="names">Achilles, Adham, Akuei, Ndongo, and Yusuf</span>
+        </p>
     </footer>
-
 </body>
 </html>

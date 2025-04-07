@@ -6,6 +6,7 @@ import os
 from scrapedining import get_meal_info
 import auth
 import re
+from collections import defaultdict
 
 # -----------------------------------------------------------------------
 
@@ -40,7 +41,12 @@ def meals_list():
 
     mealsDict = get_meal_info(diningHall, None, mealTimes[0])
 
-    return flask.render_template("meals_list.html", mealsDict=mealsDict, currDH="")
+    # We need to group meals by dining hall
+    grouped_meals = defaultdict(list)
+    for meal in mealsDict:
+        grouped_meals[meal["dhall"]].append(meal)
+
+    return flask.render_template("meals_list.html", grouped_meals=grouped_meals)
 
 
 # -----------------------------------------------------------------------

@@ -70,135 +70,6 @@ def get_ingredients_and_allergens(url):
         return f"Error retrieving ingredients: {e}", ""
 
 
-def get_dietary_tags(ingredients, allergens):
-    tags = []
-
-    ing_lower = [i.lower() for i in ingredients]
-    all_lower = [a.lower() for a in allergens]
-
-    if not any(
-        haram in ing
-        for haram in [
-            "pork",
-            "bacon",
-            "ham",
-            "lard",
-            "alcohol",
-            "beer",
-            "wine",
-            "gelatin",
-        ]
-        for ing in ing_lower
-    ):
-        tags.append("Halal")
-
-    if not any(
-        gluten in ing + " " + al
-        for gluten in ["wheat", "gluten", "barley", "rye", "malt", "semolina"]
-        for ing in ing_lower
-        for al in all_lower
-    ):
-        tags.append("Gluten Free")
-
-    if not any(
-        dairy in ing + " " + al
-        for dairy in ["milk", "cheese", "butter", "cream", "yogurt", "casein", "whey"]
-        for ing in ing_lower
-        for al in all_lower
-    ):
-        tags.append("Dairy Free")
-
-    if not any("peanut" in a for a in all_lower):
-        tags.append("Peanut Allergy Safe")
-
-    return tags
-
-
-def filter_meals(restriction, meals):
-    if restriction == "Halal":
-        halalMeals = []
-        for meal in meals:
-            ingredients = [i.lower() for i in meal["ingredients"]]
-            allergens = [a.lower() for a in meal["allergens"]]
-            if any(
-                forbidden in ing
-                for ing in ingredients
-                for forbidden in ["pork", "bacon", "ham", "lard"]
-            ):
-                continue
-            if any("alcohol" in a for a in allergens):
-                continue
-            halalMeals.append(meal)
-        return halalMeals
-
-    if restriction == "Dairy Free":
-        dairyFree = []
-        for meal in meals:
-            ingredients = [i.lower() for i in meal["ingredients"]]
-            allergens = [a.lower() for a in meal["allergens"]]
-            if any(
-                dairy in ing
-                for ing in ingredients
-                for dairy in [
-                    "milk",
-                    "cheese",
-                    "butter",
-                    "cream",
-                    "yogurt",
-                    "whey",
-                    "casein",
-                ]
-            ):
-                continue
-            if any(
-                dairy in a
-                for a in allergens
-                for dairy in [
-                    "milk",
-                    "cheese",
-                    "butter",
-                    "cream",
-                    "yogurt",
-                    "whey",
-                    "casein",
-                ]
-            ):
-                continue
-            dairyFree.append(meal)
-        return dairyFree
-
-    if restriction == "Gluten Free":
-        glutenFree = []
-        for meal in meals:
-            ingredients = [i.lower() for i in meal["ingredients"]]
-            allergens = [a.lower() for a in meal["allergens"]]
-            if any(
-                gluten in ing
-                for ing in ingredients
-                for gluten in ["wheat", "gluten", "barley", "rye", "malt", "semolina"]
-            ):
-                continue
-            if any(
-                gluten in a
-                for a in allergens
-                for gluten in ["wheat", "gluten", "barley", "rye", "malt", "semolina"]
-            ):
-                continue
-            glutenFree.append(meal)
-        return glutenFree
-
-    if restriction == "Peanut Allergy":
-        peanutSafe = []
-        for meal in meals:
-            allergens = [a.lower() for a in meal["allergens"]]
-            if any("peanut" in a for a in allergens):
-                continue
-            peanutSafe.append(meal)
-        return peanutSafe
-
-    return meals  # No filtering if restriction is unknown
-
-
 def get_meal_info(halls, date, meal):
     """Return a list of dictionaries containing meal information. Each meal
     consists of {'dhall':, 'name': , 'ingredients:', 'allergens:'}."""
@@ -244,6 +115,57 @@ def get_meal_info(halls, date, meal):
     return meals
 
 
+def get_dietary_tags(ingredients, allergens):
+    tags = []
+
+    ing_lower = [i.lower() for i in ingredients]
+    all_lower = [a.lower() for a in allergens]
+
+    if not any(
+        haram in ing
+        for haram in [
+            "pork",
+            "bacon",
+            "ham",
+            "lard",
+            "alcohol",
+            "beer",
+            "wine",
+            "gelatin",
+        ]
+        for ing in ing_lower
+    ):
+        tags.append("Halal")
+
+    if not any(
+        gluten in ing + " " + al
+        for gluten in ["wheat", "gluten", "barley", "rye", "malt", "semolina"]
+        for ing in ing_lower
+        for al in all_lower
+    ):
+        tags.append("Gluten Free")
+
+    if not any(
+        dairy in ing + " " + al
+        for dairy in ["milk", "cheese", "butter", "cream", "yogurt", "casein", "whey"]
+        for ing in ing_lower
+        for al in all_lower
+    ):
+        tags.append("Dairy Free")
+
+    if not any("peanut" in a for a in all_lower):
+        tags.append("Peanut Allergy Safe")
+
+    return tags
+
+
+def filter_meals(meals, tags):
+    """Returns a list of meals that have all of the given tags"""
+    return list(
+        meal for meal in meals if all(tag in meal["dietary_tags"] for tag in tags)
+    )
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Scrape divs from a website")
     parser.add_argument("--hall", required=True, help="Specify the hall")
@@ -255,7 +177,7 @@ if __name__ == "__main__":
     meals = get_meal_info(args.hall, args.date, args.meal)
 
     if args.filter:
-        meals = filter_meals(args.filter, meals)
+        meals = filter_meals(meals, [args.filter])
 
     for info in meals:
         print(info["name"])

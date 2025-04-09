@@ -6,6 +6,7 @@ import sys
 
 dotenv.load_dotenv()
 DATABASE_URL = os.environ["DATABASE_URL"]
+DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://")
 
 
 class Base(sqlalchemy.orm.DeclarativeBase):
@@ -22,17 +23,19 @@ class UserPreference(Base):
     peanutfree = sqlalchemy.Column(sqlalchemy.Boolean)
 
 
-def create_database(DATABASE_URL):
-    try:
-        engine = sqlalchemy.create_engine(DATABASE_URL)
+engine = sqlalchemy.create_engine(DATABASE_URL)
 
-        Base.metadata.drop_all(engine)
-        Base.metadata.create_all(engine)
+# def create_database(DATABASE_URL):
+#     try:
+#         engine = sqlalchemy.create_engine(DATABASE_URL)
 
-        engine.dispose()
-    except Exception as ex:
-        print(ex, file=sys.stderr)
-        sys.exit(1)
+#         Base.metadata.drop_all(engine)
+#         Base.metadata.create_all(engine)
+
+#         engine.dispose()
+#     except Exception as ex:
+#         print(ex, file=sys.stderr)
+#         sys.exit(1)
 
 
 def set_user_prefs(username, veg, halal, glutenfree, dairyfree, peanutfree):
@@ -104,9 +107,10 @@ def get_user_prefs(username):
 
 
 if __name__ == "__main__":
-    create_database(DATABASE_URL=DATABASE_URL)
-    set_user_prefs("ya1653", False, True, False, False, False)
-    print(get_user_prefs("ya1653"))
-    set_user_prefs("ya1653", True, True, False, False, False)
-    print(get_user_prefs("ya1653"))
-    print(get_user_prefs("ya1653"))
+    # create_database(DATABASE_URL=DATABASE_URL)
+    # set_user_prefs("ya1653", False, True, False, False, False)
+    # print(get_user_prefs("ya1653"))
+    # set_user_prefs("ya1653", True, True, False, False, False)
+    # print(get_user_prefs("ya1653"))
+    # print(get_user_prefs("ya1653"))
+    pass

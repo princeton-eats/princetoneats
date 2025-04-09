@@ -8,6 +8,8 @@ import auth
 import re
 from collections import defaultdict
 
+import database
+
 # -----------------------------------------------------------------------
 
 app = flask.Flask(__name__)
@@ -29,19 +31,51 @@ def home():
 
 @app.route("/find_meals")
 def find_meals():
-    return flask.render_template("find_meals.html")
+    vegan_vegetarian = False
+    halal = False
+    gluten_free = False
+    dairy_free = False
+    peanut_free = False
+
+    if auth.is_authenticated():
+        user_info = auth.authenticate()
+        preferences = database.get_user_prefs(user_info["user"])
+        if preferences is not None:
+            vegan_vegetarian = preferences["veg"]
+            halal = preferences["halal"]
+            gluten_free = preferences["glutenfree"]
+            dairy_free = preferences["dairyfree"]
+            peanut_free = preferences["peanutfree"]
+
+    return flask.render_template(
+        "find_meals.html",
+        vegan_vegetarian=vegan_vegetarian,
+        halal=halal,
+        gluten_free=gluten_free,
+        dairy_free=dairy_free,
+        peanut_free=peanut_free,
+    )
 
 
 @app.route("/meals_list", methods=["GET"])
 def meals_list():
     diningHall = flask.request.args.get("DHfilter").split(",")
     mealTimes = flask.request.args.get("MTfilter").split(",")
+    preferences = flask.request.args.get("ARfilter").split(",")
 
-    print(diningHall, mealTimes)
+    if auth.is_authenticated():
+        veg = "vegan-vegetarian" in preferences
+        halal = "halal" in preferences
+        glutenfree = "gluten-free" in preferences
+        dairyfree = "dairy-free" in preferences
+        peanutfree = "peanut-free" in preferences
+        user_info = auth.authenticate()
+        database.set_user_prefs(
+            user_info["user"], veg, halal, glutenfree, dairyfree, peanutfree
+        )
 
     mealsDict = get_meal_info(diningHall, None, mealTimes[0])
 
-    # We need to group meals by dining hall
     grouped_meals = defaultdict(list)
     for meal in mealsDict:
         grouped_meals[meal["dhall"]].append(meal)

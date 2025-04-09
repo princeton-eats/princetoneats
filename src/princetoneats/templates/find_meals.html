@@ -23,13 +23,11 @@
             <form id="allergensForm">
                 <div class="checkbox-group">
                     <h4>Select Restrictions</h4>
-                    <label><input type="checkbox" name="ARfilter" value="vegan"> Vegan</label>
-                    <label><input type="checkbox" name="ARfilter" value="vegetarian"> Vegetarian</label>
-                    <label><input type="checkbox" name="ARfilter" value="halal"> Halal</label>
-                    <label><input type="checkbox" name="ARfilter" value="gluten-free"> Gluten Free</label>
-                    <label><input type="checkbox" name="ARfilter" value="dairy-free"> Dairy Free</label>
-                    <label><input type="checkbox" name="ARfilter" value="peanut-free"> Peanut Allergy</label>
-                    <label><input type="checkbox" name="ARfilter" value="other"> More...</label>
+                    <label><input type="checkbox" name="ARfilter" value="vegan-vegetarian" {% if vegan_vegetarian %}checked{% endif %}> Vegan and Vegetarian </label>
+                    <label><input type="checkbox" name="ARfilter" value="halal" {% if halal %}checked{% endif %}> Halal</label>
+                    <label><input type="checkbox" name="ARfilter" value="gluten-free" {% if gluten_free %}checked{% endif %}> Gluten Free</label>
+                    <label><input type="checkbox" name="ARfilter" value="dairy-free" {% if dairy_free %}checked{% endif %}> Dairy Free</label>
+                    <label><input type="checkbox" name="ARfilter" value="peanut-free" {% if peanut_free %}checked{% endif %}> Peanut Allergy</label>
                 </div>
             </form>
 
@@ -76,20 +74,20 @@
         document.getElementById("enterButton").addEventListener("click", function() {
             let formDHF = document.getElementById("diningHallFrom");
             let formMTF = document.getElementById("mealTimeForm");
-            // let formAF = document.getElementById("allergensForm");
+            let formAF = document.getElementById("allergensForm");
 
 
             let formDataDHF = new FormData(formDHF);
             let formDataMTF = new FormData(formMTF);
-            // let formDataAF = new FormData(formAF);
+            let formDataAF = new FormData(formAF);
 
             let DH = [];
             let MT = [];
-            // let AR = [];
+            let AR = [];
 
             formDataDHF.getAll("DHfilter").forEach(value => DH.push(value));
             formDataMTF.getAll("MTfilter").forEach(value => MT.push(value));
-            // formDataMTF.getAll("ARfilter").forEach(value => AR.push(value));
+            formDataAF.getAll("ARfilter").forEach(value => AR.push(value));
 
             let errorMessage = "";
 
@@ -109,7 +107,7 @@
                errorBox.style.color = 'red';
             }
             else {
-                let queryString = `?DHfilter=${DH.join(",")}&MTfilter=${MT.join(",")}`;
+                let queryString = `?DHfilter=${DH.join(",")}&MTfilter=${MT.join(",")}&ARfilter=${AR.join(",")}`;
                 window.location.href = "/meals_list" + queryString;
             }
         });

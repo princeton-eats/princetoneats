@@ -105,8 +105,8 @@ def get_user_prefs(username):
 
 if __name__ == "__main__":
     create_database(DATABASE_URL=DATABASE_URL)
-    set_user_prefs("ai0492", False, True, False, False, False)
-    print(get_user_prefs("ai0492"))
-    set_user_prefs("ai0492", True, True, False, False, False)
-    print(get_user_prefs("ai0492"))
-    print(get_user_prefs("ai0493"))
+    set_user_prefs("ya1653", False, True, False, False, False)
+    print(get_user_prefs("ya1653"))
+    set_user_prefs("ya1653", True, True, False, False, False)
+    print(get_user_prefs("ya1653"))
+    print(get_user_prefs("ya1653"))

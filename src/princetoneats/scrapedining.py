@@ -140,7 +140,7 @@ def get_dietary_tags(ingredients, allergens):
         ]
         for ing in ing_lower
     ):
-        tags.append("Halal")
+        tags.append("halal")
 
     if not any(
         gluten in ing + " " + al
@@ -148,7 +148,7 @@ def get_dietary_tags(ingredients, allergens):
         for ing in ing_lower
         for al in all_lower
     ):
-        tags.append("Gluten Free")
+        tags.append("gluten-free")
 
     if not any(
         dairy in ing + " " + al
@@ -156,10 +156,14 @@ def get_dietary_tags(ingredients, allergens):
         for ing in ing_lower
         for al in all_lower
     ):
-        tags.append("Dairy Free")
+        tags.append("dairy-free")
 
     if not any("peanut" in a for a in all_lower):
-        tags.append("Peanut Allergy Safe")
+        tags.append("peanut-free")
+
+    # TODO: get vegan/vegetarian to work
+    # temporarily mark everything vegan-vegetarian, effectively ignoring this restriction
+    tags.append("vegan-vegetarian")
 
     return tags
 

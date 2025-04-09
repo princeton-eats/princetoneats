@@ -3,7 +3,7 @@
 import flask
 import dotenv
 import os
-from scrapedining import get_meal_info
+import scrapedining
 import auth
 import re
 from collections import defaultdict
@@ -62,6 +62,8 @@ def meals_list():
     diningHall = flask.request.args.get("DHfilter").split(",")
     mealTimes = flask.request.args.get("MTfilter").split(",")
     preferences = flask.request.args.get("ARfilter").split(",")
+    if len(preferences[0]) == 0:
+        preferences = []
 
     if auth.is_authenticated():
         veg = "vegan-vegetarian" in preferences
@@ -74,10 +76,13 @@ def meals_list():
             user_info["user"], veg, halal, glutenfree, dairyfree, peanutfree
         )
 
-    mealsDict = get_meal_info(diningHall, None, mealTimes[0])
+    meals_list = scrapedining.get_meal_info(diningHall, None, mealTimes[0])
+    print(meals_list)
+    print(preferences)
+    filtered_meals = scrapedining.filter_meals(meals_list, tags=preferences)
 
     grouped_meals = defaultdict(list)
-    for meal in mealsDict:
+    for meal in filtered_meals:
         grouped_meals[meal["dhall"]].append(meal)
 
     return flask.render_template("meals_list.html", grouped_meals=grouped_meals)

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meal Results - Princeton Eats</title>
+    <!-- Existing CSS files -->
     <link rel="stylesheet" href="static/css/meals_list.css">
     <link rel="stylesheet" href="static/css/styles.css">
 </head>
@@ -12,7 +13,6 @@
         <h1 class="logo">Princeton Eats</h1>
         <div class="nav-links">
             <a href="/">Home</a>
-            <a href="/">Sign In</a> <!-- Needs to be linked to CAS -->
         </div>
     </nav>
 
@@ -30,25 +30,30 @@
                         <li style="padding: 6px;"><strong>{{ meal["name"] }}</strong></li>
                         <div class="dropdown">
                             <ul>Ingredients</ul>
-                                <div class="dropdown-content">
-                                    {% for ingredient in meal["ingredients"] %}
-                                            <li>{{ ingredient }}</li>
-                                        {% endfor %}
-                                </div>
+                            <div class="dropdown-content">
+                                {% for ingredient in meal["ingredients"] %}
+                                    <li>{{ ingredient }}</li>
+                                {% endfor %}
+                            </div>
                         </div>
 
                         <div class="dropdown">
                             <ul>Allergens</ul>
-                                <div class="dropdown-content">
-                                    {% for allergen in meal["allergens"] %}
-                                            <li>{{ allergen }}</li>
-                                        {% endfor %}
-                                </div>
+                            <div class="dropdown-content">
+                                {% for allergen in meal["allergens"] %}
+                                    <li>{{ allergen }}</li>
+                                {% endfor %}
+                            </div>
                         </div>
                     {% endfor %}
                 </ul>
             {% endfor %}
         {% endif %}
+    </div>
+
+    <!-- Back Button Section -->
+        <button onclick="location.href='/'">Home</button>
+        <button onclick="location.href='/find_meals'">Back</button>
     </div>
 
     <div class="containerSmall">

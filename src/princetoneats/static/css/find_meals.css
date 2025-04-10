@@ -55,12 +55,13 @@ button {
 button:hover {
     background-color: #095e41;
 }
+    */
 
-/* Footer
 footer {
     margin-top: 20px;
     padding: 10px;
     background-color: #e87722;
     color: white;
+    position: fixed;
+    bottom: 0;
 }
-*/

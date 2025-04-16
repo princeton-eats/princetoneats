@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Meals - Princeton Eats</title>
+    <link rel="stylesheet" href="static/css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <h1 class="logo">Princeton Eats</h1>
+        <div class="nav-links">
+            <a href="/">Home</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="preferences-box">
+            <h2>Select Your Preferences</h2>
+            <hr class="line">
+
+            <form id="allergensForm">
+                <div class="checkbox-group">
+                    <h4>Select Restrictions</h4>
+                    <label><input type="checkbox" name="ARfilter" value="vegan-vegetarian" {% if vegan_vegetarian %}checked{% endif %}> Vegan and Vegetarian </label>
+                    <label><input type="checkbox" name="ARfilter" value="halal" {% if halal %}checked{% endif %}> Halal</label>
+                    <label><input type="checkbox" name="ARfilter" value="gluten-free" {% if gluten_free %}checked{% endif %}> Gluten Free</label>
+                    <label><input type="checkbox" name="ARfilter" value="dairy-free" {% if dairy_free %}checked{% endif %}> Dairy Free</label>
+                    <label><input type="checkbox" name="ARfilter" value="peanut-free" {% if peanut_free %}checked{% endif %}> Peanut Allergy</label>
+                </div>
+            </form>
+
+            <form id="diningHallFrom">
+                <div class="checkbox-group">
+                    <h4>Select Dining Hall</h4>
+                    <label><input type="checkbox" name="DHfilter" value="CJL">Center for Jewish Life</label>
+                    <label><input type="checkbox" name="DHfilter" value="Forbes"> Forbes College</label>
+                    <label><input type="checkbox" name="DHfilter" value="Grad"> Graduate College</label>
+                    <label><input type="checkbox" name="DHfilter" value="Roma"> Rocky-Mathey College</label>
+                    <label><input type="checkbox" name="DHfilter" value="WB"> Whitman-Butler College</label>
+                    <label><input type="checkbox" name="DHfilter" value="YN"> Yeh-New College West</label>
+                </div>
+            </form>
+
+            <form id="mealTimeForm">
+                <div class="checkbox-group">
+                    <h4>Select Meal Time</h4>
+                    <label><input type="radio" name="MTfilter" value="Breakfast"> Breakfast</label>
+                    <label><input type="radio" name="MTfilter" value="Lunch"> Lunch</label>
+                    <label><input type="radio" name="MTfilter" value="Dinner"> Dinner</label>
+                </div>
+            </form>
+
+            <div class="buttons">
+                <button onclick="location.href='/'">Back</button>
+                <button id="enterButton">Enter</button>
+            </div>
+
+            <hr class="line">
+
+            <h4 id="errorHandling" style="color: black; text-align: center;">Please select at least one dining hall and one meal time.</h4>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; COS 333 Final Project</p>
+        <p>
+            Made by <span class="names">Achilles, Adham, Akuei, Ndongo, and Yusuf</span>
+        </p>
+    </footer>
+
+    <script>
+        document.getElementById("enterButton").addEventListener("click", function() {
+            let formDHF = document.getElementById("diningHallFrom");
+            let formMTF = document.getElementById("mealTimeForm");
+            let formAF = document.getElementById("allergensForm");
+
+
+            let formDataDHF = new FormData(formDHF);
+            let formDataMTF = new FormData(formMTF);
+            let formDataAF = new FormData(formAF);
+
+            let DH = [];
+            let MT = [];
+            let AR = [];
+
+            formDataDHF.getAll("DHfilter").forEach(value => DH.push(value));
+            formDataMTF.getAll("MTfilter").forEach(value => MT.push(value));
+            formDataAF.getAll("ARfilter").forEach(value => AR.push(value));
+
+            let errorMessage = "";
+
+            if (DH.length === 0) {
+                errorMessage += "Please select at least one dining hall. ";
+            }
+            if (MT.length === 0) {
+                errorMessage += "Please select a meal time.";
+            }
+            if (MT.length > 1) {
+                errorMessage += "Please select only one meal time.";
+            }
+
+            if (errorMessage.length != 0) {
+               let errorBox = document.getElementById('errorHandling');
+               errorBox.innerText = errorMessage;
+               errorBox.style.color = 'red';
+            }
+            else {
+                let queryString = `?DHfilter=${DH.join(",")}&MTfilter=${MT.join(",")}&ARfilter=${AR.join(",")}`;
+                window.location.href = "/meals_list" + queryString;
+            }
+        });
+    </script>
+</body>
+</html>

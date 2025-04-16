@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meal Results - Princeton Eats</title>
+    <!-- Existing CSS files -->
+    <link rel="stylesheet" href="static/css/meals_list.css">
+    <link rel="stylesheet" href="static/css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <h1 class="logo">Princeton Eats</h1>
+        <div class="nav-links">
+            <a href="/">Home</a>
+        </div>
+    </nav>
+
+    <div class="containerMeals">
+        {% if grouped_meals|length == 0 %}
+            <p>Today is a weekend, please search for lunch options instead.</p>
+        {% else %}
+            <h2>Here are Your Options</h2>
+            <h5>Scroll over Ingredients and Allergens for Details</h5>
+            <hr class="line">
+            {% for dhall, meals in grouped_meals.items() %}
+                <h3>Dining hall: {{ dhall }}</h3>
+                <ul>
+                    {% for meal in meals %}
+                        <li style="padding: 6px;"><strong>{{ meal["name"] }}</strong></li>
+                        <div class="dropdown">
+                            <ul>Ingredients</ul>
+                            <div class="dropdown-content">
+                                {% for ingredient in meal["ingredients"] %}
+                                    <li>{{ ingredient }}</li>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="dropdown">
+                            <ul>Allergens</ul>
+                            <div class="dropdown-content">
+                                {% for allergen in meal["allergens"] %}
+                                    <li>{{ allergen }}</li>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Back Button Section -->
+        <button onclick="location.href='/'">Home</button>
+        <button onclick="location.href='/find_meals'">Back</button>
+    </div>
+
+    <div class="containerSmall">
+        <h2>REMEMBER!</h2>
+        <div id="warning">
+            <p style="text-align: center;">Always follow up with campus dining staff to confirm ingredients!</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; COS 333 Final Project</p>
+        <p>
+            Made by <span class="names">Achilles, Adham, Akuei, Ndongo, and Yusuf</span>
+        </p>
+    </footer>
+</body>
+</html>

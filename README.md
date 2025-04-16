@@ -4,38 +4,29 @@ Welcome to Princeton Eats.
 
 ## Set-up Instructions
 
-### 1. Clone the Repository
-
 First, clone the repository from GitHub to your local machine:
 
 ```bash
-git clone https://github.com/fusuy4/princetoneats.git
+git clone https://github.com/princeton-eats/princetoneats.git
 cd princetoneats
 ```
 
-### 2. Create a Virtual Environment
+Run the `setup.sh` script to complete necessary setup.
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
+bash setup.sh
 ```
 
-### 3. Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Set up pre-commit hooks
-
-```bash
-pre-commit install
-```
-
-## Run the app
+Run the app on `localhost:8000`.
 
 ```bash
 python src/princetoneats/app.py
+```
+
+For development, run `dev.sh` to set up your environment for development and checkout the most recent development branch.
+
+```bash
+bash dev.sh
 ```
 
 --

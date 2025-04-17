@@ -27,8 +27,11 @@ class UserPreference(Base):
 
 engine = sqlalchemy.create_engine(DATABASE_URL)
 
+# ------------------------------------------------------------
 
-def _create_database(DATABASE_URL):
+
+# Database manegement
+def _create_database():
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
 
@@ -41,7 +44,9 @@ def _create_database(DATABASE_URL):
         sys.exit(1)
 
 
-def _remove_user(username):
+def _db_helper(username, callback_func):
+    """The callback_func takes the user object and db session and
+    will update the db and/or return a value"""
     try:
         engine = sqlalchemy.create_engine(DATABASE_URL)
 
@@ -50,22 +55,34 @@ def _remove_user(username):
                 UserPreference.username == username
             )
 
-            row = query.one_or_none()
+            user = query.one_or_none()
 
-            in_table = row is not None
-
-            if in_table:
-                session.delete(row)
+            ret = callback_func(user, session)
 
             session.commit()
 
         engine.dispose()
 
-        return in_table
+        return ret
 
+        # return result
     except Exception as ex:
         print(ex, file=sys.stderr)
         sys.exit(1)
+
+
+# ------------------------------------------------------------
+
+
+#  Functions for maneging users
+def _remove_user(username):
+    def callback_func(user, session):
+        in_table = user is not None
+
+        if in_table:
+            session.delete(user)
+
+    _db_helper(username, callback_func)
 
 
 def add_user(username, session):
@@ -83,209 +100,98 @@ def add_user(username, session):
     return user
 
 
+# ------------------------------------------------------------
+
+
+# Setters and getters for  user preferences
 def set_user_prefs(username, veg, halal, glutenfree, dairyfree, peanutfree):
-    try:
-        engine = sqlalchemy.create_engine(DATABASE_URL)
-
-        with sqlalchemy.orm.Session(engine) as session:
-            query = session.query(UserPreference).filter(
-                UserPreference.username == username
+    def callback_func(user, session):
+        if user is None:
+            user = UserPreference(
+                username=username,
+                fav_meals="",
+                veg=veg,
+                halal=halal,
+                glutenfree=glutenfree,
+                dairyfree=dairyfree,
+                peanutfree=peanutfree,
             )
+            session.add(user)
+        else:
+            user.veg = veg
+            user.halal = halal
+            user.glutenfree = glutenfree
+            user.dairyfree = dairyfree
+            user.peanutfree = peanutfree
 
-            row = query.one_or_none()
-
-            if row is None:
-                user = UserPreference(
-                    username=username,
-                    fav_meals="",
-                    veg=veg,
-                    halal=halal,
-                    glutenfree=glutenfree,
-                    dairyfree=dairyfree,
-                    peanutfree=peanutfree,
-                )
-                session.add(user)
-            else:
-                row.veg = veg
-                row.halal = halal
-                row.glutenfree = glutenfree
-                row.dairyfree = dairyfree
-                row.peanutfree = peanutfree
-
-            session.commit()
-
-        engine.dispose()
-
-    except Exception as ex:
-        print(ex, file=sys.stderr)
-        sys.exit(1)
+    return _db_helper(username, callback_func)
 
 
 def get_user_prefs(username):
-    try:
-        engine = sqlalchemy.create_engine(DATABASE_URL)
-
-        with sqlalchemy.orm.Session(engine) as session:
-            query = session.query(UserPreference).filter(
-                UserPreference.username == username
-            )
-
-            row = query.one_or_none()
-            if row is None:
-                result = None
-            else:
-                result = {
-                    "veg": row.veg,
-                    "halal": row.halal,
-                    "glutenfree": row.glutenfree,
-                    "dairyfree": row.dairyfree,
-                    "peanutfree": row.peanutfree,
-                }
-
-            session.commit()
-
-        engine.dispose()
-
+    def callback_func(user, session):
+        if user is None:
+            result = None
+        else:
+            result = {
+                "veg": user.veg,
+                "halal": user.halal,
+                "glutenfree": user.glutenfree,
+                "dairyfree": user.dairyfree,
+                "peanutfree": user.peanutfree,
+            }
         return result
-    except Exception as ex:
-        print(ex, file=sys.stderr)
-        sys.exit(1)
+
+    return _db_helper(username, callback_func)
 
 
+# ------------------------------------------------------------
+
+
+# Favorite meal functionality
 def add_fav_meal(username, meal_name):
-    try:
-        engine = sqlalchemy.create_engine(DATABASE_URL)
+    def callback_func(user, session):
+        if user is None:
+            user = add_user(username, session)
 
-        with sqlalchemy.orm.Session(engine) as session:
-            query = session.query(UserPreference).filter(
-                UserPreference.username == username
-            )
+        if meal_name not in user.fav_meals:
+            user.fav_meals += "," + meal_name
+        return user is None
 
-            user = query.one_or_none()
-            # if no user in table add empty user
-            if user is None:
-                user = add_user(username, session)
-
-            if meal_name not in user.fav_meals:
-                user.fav_meals += "," + meal_name
-
-            session.commit()
-
-        engine.dispose()
-
-        # return result
-    except Exception as ex:
-        print(ex, file=sys.stderr)
-        sys.exit(1)
+    return _db_helper(username, callback_func)
 
 
 def remove_fav_meal(username, meal_name):
-    try:
-        engine = sqlalchemy.create_engine(DATABASE_URL)
-
-        with sqlalchemy.orm.Session(engine) as session:
-            query = session.query(UserPreference).filter(
-                UserPreference.username == username
-            )
-
-            user = query.one_or_none()
-            # if no user in table add empty user
-            if user is None:
-                ret = False
-            else:
-                ret = meal_name in user.fav_meals
-                if meal_name in user.fav_meals:
-                    user.fav_meals = user.fav_meals.replace(meal_name, "")
-
-            session.commit()
-
-        engine.dispose()
+    def callback_func(user, session):
+        if user is None:
+            ret = False
+        else:
+            ret = meal_name in user.fav_meals
+            if meal_name in user.fav_meals:
+                user.fav_meals = user.fav_meals.replace(meal_name, "")
         return ret
 
-        # return result
-    except Exception as ex:
-        print(ex, file=sys.stderr)
-        sys.exit(1)
+    return _db_helper(username, callback_func)
 
 
 def is_fav_meal(username, meal_name):
-    try:
-        engine = sqlalchemy.create_engine(DATABASE_URL)
+    def callback_func(user, session):
+        if user is None:
+            return False
+        return meal_name in user.fav_meals
 
-        with sqlalchemy.orm.Session(engine) as session:
-            query = session.query(UserPreference).filter(
-                UserPreference.username == username
-            )
-
-            user = query.one_or_none()
-            # if no user in table add empty user
-            if user is None:
-                user = add_user(username, session)
-
-            is_fav_meal = meal_name in user.fav_meals
-
-            session.commit()
-
-        engine.dispose()
-
-        return is_fav_meal
-    except Exception as ex:
-        print(ex, file=sys.stderr)
-        sys.exit(1)
+    return _db_helper(username, callback_func)
 
 
-def get_fav_meals(username, meal_name):
-    try:
-        engine = sqlalchemy.create_engine(DATABASE_URL)
+def get_fav_meals(username):
+    def callback_func(user, session):
+        return "" if user is None else user.fav_meals
 
-        with sqlalchemy.orm.Session(engine) as session:
-            query = session.query(UserPreference).filter(
-                UserPreference.username == username
-            )
-
-            user = query.one_or_none()
-            # if no user in table add empty user
-            fav_meals = "" if user is None else user.fav_meals
-
-            session.commit()
-
-        engine.dispose()
-
-        return fav_meals
-
-        # return result
-    except Exception as ex:
-        print(ex, file=sys.stderr)
-        sys.exit(1)
+    return _db_helper(username, callback_func)
 
 
-# def db_helper(username, callback_func):
-#     """The callback_func takes the user object and db session and
-#      will update the db and/or return a value """
-#     try:
-#         engine = sqlalchemy.create_engine(DATABASE_URL)
+# ------------------------------------------------------------
 
-#         with sqlalchemy.orm.Session(engine) as session:
-#             query = session.query(UserPreference).filter(
-#                 UserPreference.username == username
-#             )
-
-#             user = query.one_or_none()
-
-#             ret = callback_func(user, session)
-
-#             session.commit()
-
-#         engine.dispose()
-
-#         return ret
-
-#         # return result
-#     except Exception as ex:
-#         print(ex, file=sys.stderr)
-#         sys.exit(1)
-
-
+# Testing
 if __name__ == "__main__":
     """ Test client """
 

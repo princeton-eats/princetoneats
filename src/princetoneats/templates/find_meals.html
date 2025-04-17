@@ -39,12 +39,13 @@
 
             <form id="allergensForm">
                 <div class="checkbox-group">
-                    <h5>Select Restrictions</h4>
-                    <label><input type="checkbox" class="form-check-input" for="customCheck1" name="ARfilter" value="vegan-vegetarian" {% if vegan_vegetarian %}checked{% endif %}> Vegan and Vegetarian </label>
-                    <label><input type="checkbox" class="form-check-input" for="customCheck1" name="ARfilter" value="halal" {% if halal %}checked{% endif %}> Halal</label>
-                    <label><input type="checkbox" class="form-check-input" for="customCheck1" name="ARfilter" value="gluten-free" {% if gluten_free %}checked{% endif %}> Gluten Free</label>
-                    <label><input type="checkbox" class="form-check-input" for="customCheck1" name="ARfilter" value="dairy-free" {% if dairy_free %}checked{% endif %}> Dairy Free</label>
-                    <label><input type="checkbox" class="form-check-input" for="customCheck1" name="ARfilter" value="peanut-free" {% if peanut_free %}checked{% endif %}> Peanut Allergy</label>
+                    <h4>Select Restrictions</h4>
+                    {% if prev_restrictions_stored %}<p>Restrictions loaded from last query.</p>{% else %}{% endif %}
+                    <label><input type="checkbox" name="ARfilter" value="vegan-vegetarian" {% if vegan_vegetarian %}checked{% endif %}> Vegan and Vegetarian </label>
+                    <label><input type="checkbox" name="ARfilter" value="halal" {% if halal %}checked{% endif %}> Halal</label>
+                    <label><input type="checkbox" name="ARfilter" value="gluten-free" {% if gluten_free %}checked{% endif %}> Gluten Free</label>
+                    <label><input type="checkbox" name="ARfilter" value="dairy-free" {% if dairy_free %}checked{% endif %}> Dairy Free</label>
+                    <label><input type="checkbox" name="ARfilter" value="peanut-free" {% if peanut_free %}checked{% endif %}> Peanut Allergy</label>
                 </div>
             </form>
 

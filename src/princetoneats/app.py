@@ -57,7 +57,8 @@ def find_meals():
     if auth.is_authenticated():
         user_info = auth.authenticate()
         preferences = database.get_user_prefs(user_info["user"])
-        if preferences is not None:
+        prev_restrictions_stored = preferences is not None
+        if prev_restrictions_stored:
             vegan_vegetarian = preferences["veg"]
             halal = preferences["halal"]
             gluten_free = preferences["glutenfree"]
@@ -66,6 +67,7 @@ def find_meals():
 
     return flask.render_template(
         "find_meals.html",
+        prev_restrictions_stored=prev_restrictions_stored,
         vegan_vegetarian=vegan_vegetarian,
         halal=halal,
         gluten_free=gluten_free,

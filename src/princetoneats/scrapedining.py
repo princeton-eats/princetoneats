@@ -100,29 +100,33 @@ def get_meal_info(halls, date, meal_time):
         # Parse the HTML content
         soup = BeautifulSoup(response.text, "html.parser")
 
-        # Find all divs with the meal names.
-        divs = soup.find_all("div", class_=_MEAL_NAME_CLASS)
+        current_section = ""
+        for elem in soup.find_all(["h2", "div"]):
+            if elem.name == "h2":
+                current_section = elem.get_text(strip=True).lower()
+            elif elem.name == "div" and elem.get("class") == [_MEAL_NAME_CLASS]:
+                name = elem.get_text(strip=True)
+                a_tag = elem.find("a", href=True)
+                if not a_tag:
+                    continue
 
-        for div in divs:
-            name = div.get_text(strip=True)
-            # Find all <a> tags within the divs and print their href attribute
-            a_tag = div.find("a", href=True)
-            details_url = _MENUS_URL_START + a_tag["href"]
+                details_url = _MENUS_URL_START + a_tag["href"]
+                ingredients, allergens = get_ingredients_and_allergens(details_url)
+                tags = get_dietary_tags(ingredients, allergens)
 
-            ingredients, allergens = get_ingredients_and_allergens(details_url)
+                if "vegetarian" in current_section or "vegan" in current_section:
+                    if "vegan-vegetarian" not in tags:
+                        tags.append("vegan-vegetarian")
 
-            tags = get_dietary_tags(ingredients, allergens)
-
-            meals.append(
-                {
-                    "dhall": dhall_name,
-                    "name": name,
-                    "ingredients": ingredients,
-                    "allergens": allergens,
-                    "dietary_tags": tags,
-                }
-            )
-
+                meals.append(
+                    {
+                        "dhall": dhall_name,
+                        "name": name,
+                        "ingredients": ingredients,
+                        "allergens": allergens,
+                        "dietary_tags": tags,
+                    }
+                )
     return meals
 
 
@@ -171,7 +175,7 @@ def get_dietary_tags(ingredients, allergens):
 
     # TODO: get vegan/vegetarian to work
     # temporarily mark everything vegan-vegetarian, effectively ignoring this restriction
-    tags.append("vegan-vegetarian")
+    # tags.append("vegan-vegetarian")
 
     return tags
 

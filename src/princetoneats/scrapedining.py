@@ -110,6 +110,8 @@ def get_meal_info(halls, date, meal_time):
             details_url = _MENUS_URL_START + a_tag["href"]
 
             ingredients, allergens = get_ingredients_and_allergens(details_url)
+            print(ingredients)
+            print(allergens)
 
             tags = get_dietary_tags(ingredients, allergens)
 

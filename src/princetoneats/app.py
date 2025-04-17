@@ -15,7 +15,7 @@ import database
 app = flask.Flask(__name__)
 
 dotenv.load_dotenv()
-app.secret_key = os.environ["APP_SECRET_KEY"]
+app.secret_key = os.environ.get("APP_SECRET_KEY", "dev_secret_key_for_testing")
 
 # -----------------------------------------------------------------------
 
@@ -59,9 +59,9 @@ def find_meals():
 
 @app.route("/meals_list", methods=["GET"])
 def meals_list():
-    diningHall = flask.request.args.get("DHfilter").split(",")
-    mealTimes = flask.request.args.get("MTfilter").split(",")
-    preferences = flask.request.args.get("ARfilter").split(",")
+    diningHall = flask.request.args.get("DHfilter", "").split(",")
+    mealTimes = flask.request.args.get("MTfilter", "").split(",")
+    preferences = flask.request.args.get("ARfilter", "").split(",")
     if len(preferences[0]) == 0:
         preferences = []
 
@@ -76,16 +76,17 @@ def meals_list():
             user_info["user"], veg, halal, glutenfree, dairyfree, peanutfree
         )
 
-    meals_list = scrapedining.get_meal_info(diningHall, None, mealTimes[0])
-    print(meals_list)
-    print(preferences)
-    filtered_meals = scrapedining.filter_meals(meals_list, tags=preferences)
+        meals_list = scrapedining.get_meal_info(diningHall, None, mealTimes[0])
+        print(f"Found {len(meals_list)} total meals")
+        print(f"Filtering with preferences: {preferences}")
+        filtered_meals = scrapedining.filter_meals(meals_list, tags=preferences)
+        print(f"After filtering, {len(filtered_meals)} meals remain")
 
-    grouped_meals = defaultdict(list)
-    for meal in filtered_meals:
-        grouped_meals[meal["dhall"]].append(meal)
+        grouped_meals = defaultdict(list)
+        for meal in filtered_meals:
+            grouped_meals[meal["dhall"]].append(meal)
 
-    return flask.render_template("meals_list.html", grouped_meals=grouped_meals)
+        return flask.render_template("meals_list.html", grouped_meals=grouped_meals)
 
 
 # -----------------------------------------------------------------------

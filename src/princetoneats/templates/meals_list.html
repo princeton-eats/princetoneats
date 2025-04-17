@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meal Results - Princeton Eats</title>
-    <!-- Existing CSS files -->
-    <link rel="stylesheet" href="static/css/meals_list.css">
+    <!-- CSS files -->
     <link rel="stylesheet" href="static/css/styles.css">
+    <link rel="stylesheet" href="static/css/meals_list.css">
 </head>
 <body>
     <nav class="navbar">
@@ -18,40 +18,65 @@
 
     <div class="containerMeals">
         {% if grouped_meals|length == 0 %}
-            <p>Today is a weekend, please search for lunch options instead.</p>
+            <div class="empty-results">
+                <p>No meals found that match your criteria. Try adjusting your preferences or dining hall selection.</p>
+            </div>
         {% else %}
             <h2>Here are Your Options</h2>
-            <h5>Scroll over Ingredients and Allergens for Details</h5>
+            <div class="unroll-instruction">Click on a dining hall mat to unroll and see the meals</div>
             <hr class="line">
-            {% for dhall, meals in grouped_meals.items() %}
-                <h3>Dining hall: {{ dhall }}</h3>
-                <ul>
-                    {% for meal in meals %}
-                        <li style="padding: 6px;"><strong>{{ meal["name"] }}</strong></li>
-                        <div class="dropdown">
-                            <ul>Ingredients</ul>
-                            <div class="dropdown-content">
-                                {% for ingredient in meal["ingredients"] %}
-                                    <li>{{ ingredient }}</li>
-                                {% endfor %}
-                            </div>
-                        </div>
 
-                        <div class="dropdown">
-                            <ul>Allergens</ul>
-                            <div class="dropdown-content">
-                                {% for allergen in meal["allergens"] %}
-                                    <li>{{ allergen }}</li>
+            <!-- Scroll indicators -->
+            <div class="scroll-indicator scroll-left" id="scrollLeft">&#8249;</div>
+            <div class="scroll-indicator scroll-right" id="scrollRight">&#8250;</div>
+
+            <!-- Container for the single row of rolled mats -->
+            <div class="dhall-container" id="dhallContainer">
+                {% for dhall, meals in grouped_meals.items() %}
+                    <!-- Each dining hall is a rolled mat that expands when clicked -->
+                    <div class="dhall-box" onclick="toggleMat(this)">
+                        <div class="mat-ribbon"></div>
+                        <h3 class="dhall-title">{{ dhall }}</h3>
+                        <div class="content">
+                            <ul>
+                                {% for meal in meals %}
+                                    <li class="meal-item">
+                                        <strong>{{ meal["name"] }}</strong>
+                                        <div>
+                                            <span class="dropdown">
+                                                Ingredients
+                                                <div class="dropdown-content">
+                                                    <ul>
+                                                    {% for ingredient in meal["ingredients"] %}
+                                                        <li>{{ ingredient }}</li>
+                                                    {% endfor %}
+                                                    </ul>
+                                                </div>
+                                            </span>
+
+                                            <span class="dropdown">
+                                                Allergens
+                                                <div class="dropdown-content">
+                                                    <ul>
+                                                    {% for allergen in meal["allergens"] %}
+                                                        <li>{{ allergen }}</li>
+                                                    {% endfor %}
+                                                    </ul>
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </li>
                                 {% endfor %}
-                            </div>
+                            </ul>
                         </div>
-                    {% endfor %}
-                </ul>
-            {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
         {% endif %}
     </div>
 
     <!-- Back Button Section -->
+    <div class="back-buttons">
         <button onclick="location.href='/'">Home</button>
         <button onclick="location.href='/find_meals'">Back</button>
     </div>
@@ -69,5 +94,52 @@
             Made by <span class="names">Achilles, Adham, Akuei, Ndongo, and Yusuf</span>
         </p>
     </footer>
+
+    <script>
+        // Add interactive functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scroll functionality
+            const container = document.getElementById('dhallContainer');
+            const scrollLeftBtn = document.getElementById('scrollLeft');
+            const scrollRightBtn = document.getElementById('scrollRight');
+
+            if (scrollLeftBtn && scrollRightBtn && container) {
+                // Scroll buttons
+                scrollLeftBtn.addEventListener('click', function(e) {
+                    container.scrollBy({ left: -300, behavior: 'smooth' });
+                    e.stopPropagation();
+                });
+
+                scrollRightBtn.addEventListener('click', function(e) {
+                    container.scrollBy({ left: 300, behavior: 'smooth' });
+                    e.stopPropagation();
+                });
+            }
+
+            // Prevent dropdown clicks from toggling the mat
+            const dropdowns = document.querySelectorAll('.dropdown');
+            dropdowns.forEach(dropdown => {
+                dropdown.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            });
+        });
+
+        // Toggle mat expansion
+        function toggleMat(element) {
+            // Check if the click was on a dropdown
+            if (event.target.closest('.dropdown-content') || event.target.closest('.dropdown')) {
+                return;
+            }
+
+            // Toggle the expanded class
+            element.classList.toggle('expanded');
+
+            // Scroll the mat into view if it's expanded
+            if (element.classList.contains('expanded')) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+    </script>
 </body>
 </html>

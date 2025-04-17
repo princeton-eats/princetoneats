@@ -20,27 +20,33 @@ def map_args(hall, date):
     if hall == "r" or hall == "Roma":
         hall_url = "+Rockefeller+%26+Mathey+Colleges"
         location_num = 1
+        dhall_name = "Rocky & Mathey"
     elif hall == "f" or hall == "Forbes":
         hall_url = "Forbes+College"
         location_num = 3
+        dhall_name = "Forbes College"
     elif hall == "w" or hall == "WB":
         hall_url = "Whitman+College+%26+Butler+College"
         location_num = 8
+        dhall_name = "Whitman & Butler"
     elif hall == "y" or hall == "YN":
         hall_url = "Yeh+College+%26+New+College+West"
         location_num = 6
+        dhall_name = "Yeh & NCW"
     elif hall == "c" or hall == "CJL":
         hall_url = "Center+for+Jewish+Life"
         location_num = 5
-    elif hall == "g" or "Grad":
+        dhall_name = "CJL"
+    elif hall == "g" or hall == "Grad":
         hall_url = "Graduate+College"
         location_num = 4
+        dhall_name = "Graduate College"
 
     if date is None:
         date = get_current_date()
     date_url = "%2F".join(date.split("/"))
 
-    return hall_url, date_url, location_num
+    return hall_url, date_url, location_num, dhall_name
 
 
 def get_details_url(formatted_hall, formatted_date, formatted_meal, location_num):
@@ -60,12 +66,12 @@ def get_ingredients_and_allergens(url):
         ingredients_span = soup.find("span", class_=_INGREDIENTS_CLASS)
         ingredients = ingredients_span.get_text().split(",")
         if len(ingredients) == 0:
-            ingredients[0] = "No ingredients found"
+            ingredients = ["No ingredients found"]
 
         allergens_span = soup.find("span", class_=_ALLERGENS_CLASS)
         allergens = allergens_span.get_text().split(",")
         if len(allergens[0]) == 0:
-            allergens[0] = "No allergens listed"
+            allergens[0] = ["No allergens listed"]
 
         return ingredients, allergens
 
@@ -78,7 +84,7 @@ def get_meal_info(halls, date, meal_time):
     consists of {'dhall':, 'name': , 'ingredients:', 'allergens:', 'dietary_tags:'}."""
     meals = []
     for hall in halls:
-        formatted_hall, formatted_date, location_num = map_args(hall, date)
+        formatted_hall, formatted_date, location_num, dhall_name = map_args(hall, date)
 
         # meal doesn't need formatting
         url = get_details_url(formatted_hall, formatted_date, meal_time, location_num)
@@ -86,7 +92,9 @@ def get_meal_info(halls, date, meal_time):
         response = requests.get(url)
 
         if response.status_code != 200:
-            print(f"Failed to retrieve page, status code: {response.status_code}")
+            print(
+                f"Failed to retrieve page for {hall}, status code: {response.status_code}"
+            )
             return
 
         # Parse the HTML content
@@ -107,7 +115,7 @@ def get_meal_info(halls, date, meal_time):
 
             meals.append(
                 {
-                    "dhall": hall,
+                    "dhall": dhall_name,
                     "name": name,
                     "ingredients": ingredients,
                     "allergens": allergens,

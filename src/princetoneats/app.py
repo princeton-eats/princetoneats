@@ -33,7 +33,7 @@ def home():
 # -----------------------------------------------------------------------
 
 
-# Home Page
+# About Page
 @app.route("/about")
 def about():
     # check session for user info
@@ -41,6 +41,45 @@ def about():
     username = None if user_info is None else user_info["user"]
 
     return flask.render_template("about.html", username=username)
+
+
+# -----------------------------------------------------------------------
+
+
+# Dashboard Page
+@app.route("/dashboard")
+def dashboard():
+    # check session for user info
+    user_info = flask.session.get("user_info")
+    print(user_info["attributes"])
+    username = None if user_info is None else user_info["user"]
+    userFirstname = (
+        None
+        if user_info is None
+        else user_info["attributes"]["displayname"][0].split(" ")[0]
+    )
+
+    if auth.is_authenticated():
+        user_info = auth.authenticate()
+        preferences = database.get_user_prefs(user_info["user"])
+
+    meals_list = scrapedining.get_meal_info(["Roma"], None, "Breakfast")
+    print(f"Found {len(meals_list)} total meals")
+    print(f"Filtering with preferences: {preferences}")
+    filtered_meals = scrapedining.filter_meals(meals_list, tags=preferences)
+    print(f"After filtering, {len(filtered_meals)} meals remain")
+
+    grouped_meals = defaultdict(list)
+    for meal in filtered_meals:
+        grouped_meals[meal["dhall"]].append(meal)
+
+    return flask.render_template(
+        "dashboard.html",
+        hall="Roma",
+        grouped_meals=grouped_meals,
+        username=username,
+        userFirstname=userFirstname,
+    )
 
 
 # Find Meals Page
@@ -128,7 +167,7 @@ def logincas():
     user_info = auth.authenticate()
     username = user_info["user"]
     print(username)
-    return flask.redirect(flask.url_for("home"))
+    return flask.redirect(flask.url_for("dashboard"))
 
 
 @app.route("/logoutcas", methods=["GET"])

@@ -71,7 +71,7 @@ def get_ingredients_and_allergens(url):
         allergens_span = soup.find("span", class_=_ALLERGENS_CLASS)
         allergens = allergens_span.get_text().split(",")
         if len(allergens[0]) == 0:
-            allergens[0] = ["No allergens listed"]
+            allergens = ["No allergens listed"]
 
         return ingredients, allergens
 
@@ -110,6 +110,8 @@ def get_meal_info(halls, date, meal_time):
             details_url = _MENUS_URL_START + a_tag["href"]
 
             ingredients, allergens = get_ingredients_and_allergens(details_url)
+            print(ingredients)
+            print(allergens)
 
             tags = get_dietary_tags(ingredients, allergens)
 

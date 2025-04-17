@@ -76,17 +76,17 @@ def meals_list():
             user_info["user"], veg, halal, glutenfree, dairyfree, peanutfree
         )
 
-        meals_list = scrapedining.get_meal_info(diningHall, None, mealTimes[0])
-        print(f"Found {len(meals_list)} total meals")
-        print(f"Filtering with preferences: {preferences}")
-        filtered_meals = scrapedining.filter_meals(meals_list, tags=preferences)
-        print(f"After filtering, {len(filtered_meals)} meals remain")
+    meals_list = scrapedining.get_meal_info(diningHall, None, mealTimes[0])
+    print(f"Found {len(meals_list)} total meals")
+    print(f"Filtering with preferences: {preferences}")
+    filtered_meals = scrapedining.filter_meals(meals_list, tags=preferences)
+    print(f"After filtering, {len(filtered_meals)} meals remain")
 
-        grouped_meals = defaultdict(list)
-        for meal in filtered_meals:
-            grouped_meals[meal["dhall"]].append(meal)
+    grouped_meals = defaultdict(list)
+    for meal in filtered_meals:
+        grouped_meals[meal["dhall"]].append(meal)
 
-        return flask.render_template("meals_list.html", grouped_meals=grouped_meals)
+    return flask.render_template("meals_list.html", grouped_meals=grouped_meals)
 
 
 # -----------------------------------------------------------------------

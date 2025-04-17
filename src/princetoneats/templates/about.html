@@ -28,35 +28,23 @@
         </div>
     </nav>
 
-    <div class="container-fluid flex-fill d-flex justify-content-center align-items-center">
-        <div class="row w-100 justify-content-center">
+    <div class="container">
+        <p class="intro"><strong>Imagine this...</strong></p>
+        <hr class="line">
+        <p class="description">
+            You’re rushing out of COS 333 at 1:20 PM, stomach growling, with just over an hour before your next class.
+            You need to grab lunch, but there’s a problem—your dietary restrictions mean you can’t just walk into any dining
+            hall and eat anything available. Princeton Dining’s website has the info, but sifting through menus for all seven halls?
+            That’s time you don’t have, and you are NOT the only one who feels that way. It’s so many of us out here.
+            That’s where Princeton Eats comes in, your personal dining meal recommend. In seconds, it scans every dining hall menu,
+            filters meals based on your preferences—vegan, halal, gluten-free, nut-free, you name it—and tells you exactly where to go
+            for a meal that fits your needs.
+        </p>
 
-    <!-- Left Column (Header/Text) -->
-        <div class="col-md-6 text-center">
-            <h1 class="display-4">Welcome to PrincetonEats</h1>
-            <h2 class="lead">Discover meals around campus with ease. No stress,
-                no scrolling, just fast, personalized meal recommendations.
-            </h2>
-
-            <div class="buttons">
-                <button onclick="location.href='/find_meals'" class="custom-button">FIND MEALS</button>
-
-                <button onclick="location.href='{% if username %}/logoutcas{% else %}/logincas{% endif %}'"
-                    class="custom-button">
-                    SIGN {% if username %}OUT{% else %}IN{% endif %}
-                </button>
-            </div>
-        </div>
-
-        <!-- Right Column (Image) -->
-        <div class="col-md-6 text-center">
-            <p>can drop a little sumthing here</p>
-        </div>
-
-        </div>
+        <p class="subtext">No stress, no scrolling, just fast, personalized meal recommendations.</p>
     </div>
 
-    <div class="container-fluid, footer" style="padding: 5px;">
+    <div class="container-fluid, footer fixed-bottom" style="padding: 5px;">
         <center>
             &copy; COS 333 Final Project
             <br>

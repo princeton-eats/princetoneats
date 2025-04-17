@@ -71,7 +71,7 @@ def get_ingredients_and_allergens(url):
         allergens_span = soup.find("span", class_=_ALLERGENS_CLASS)
         allergens = allergens_span.get_text().split(",")
         if len(allergens[0]) == 0:
-            allergens[0] = ["No allergens listed"]
+            allergens = ["No allergens listed"]
 
         return ingredients, allergens
 

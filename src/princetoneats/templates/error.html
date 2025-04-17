@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - Princeton Eats</title>
+    <link rel="stylesheet" href="static/css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <h1 class="logo">Princeton Eats</h1>
+        <div class="nav-links">
+            <a href="/">Home</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>Oops! Something went wrong</h2>
+        <hr class="line">
+
+        <div style="background-color: #fff3cd; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <p style="color: #856404; font-weight: bold;">{{ error_message }}</p>
+        </div>
+
+        <div class="buttons">
+            <button onclick="location.href='/find_meals'">Back to Search</button>
+            <button onclick="location.href='/'">Home</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; COS 333 Final Project</p>
+        <p>
+            Made by <span class="names">Achilles, Adham, Akuei, Ndongo, and Yusuf</span>
+        </p>
+    </footer>
+</body>
+</html>

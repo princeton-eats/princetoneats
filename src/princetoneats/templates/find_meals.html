@@ -40,7 +40,7 @@
             <form id="allergensForm">
                 <div class="checkbox-group">
                     <h4>Select Restrictions</h4>
-                    {% if prev_restrictions_stored %}<p>Restrictions loaded from last query.</p>{% else %}{% endif %}
+                    <!-- {% if prev_restrictions_stored %}<p>Restrictions loaded from last query.</p>{% else %}{% endif %} -->
                     <label><input type="checkbox" name="ARfilter" value="vegan-vegetarian" {% if vegan_vegetarian %}checked{% endif %}> Vegan and Vegetarian </label>
                     <label><input type="checkbox" name="ARfilter" value="halal" {% if halal %}checked{% endif %}> Halal</label>
                     <label><input type="checkbox" name="ARfilter" value="gluten-free" {% if gluten_free %}checked{% endif %}> Gluten Free</label>

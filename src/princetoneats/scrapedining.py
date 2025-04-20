@@ -6,6 +6,7 @@ from datetime import datetime
 
 _MENUS_URL_START = "https://menus.princeton.edu/dining/_Foodpro/online-menu/"
 _MEAL_NAME_CLASS = "pickmenucoldispname"
+_MEAL_SECTION_CLASS = "pickmenucolmenucat"
 _INGREDIENTS_CLASS = "labelingredientsvalue"
 _ALLERGENS_CLASS = "labelallergensvalue"
 
@@ -100,30 +101,33 @@ def get_meal_info(halls, date, meal_time):
         # Parse the HTML content
         soup = BeautifulSoup(response.text, "html.parser")
 
-        # Find all divs with the meal names.
-        divs = soup.find_all("div", class_=_MEAL_NAME_CLASS)
+        current_section = ""
+        for elem in soup.find_all("div"):
+            if elem.get("class") == [_MEAL_SECTION_CLASS]:
+                current_section = elem.get_text(strip=True).lower()
+            elif elem.get("class") == [_MEAL_NAME_CLASS]:
+                name = elem.get_text(strip=True)
+                a_tag = elem.find("a", href=True)
+                if not a_tag:
+                    continue
 
-        for div in divs:
-            name = div.get_text(strip=True)
-            # Find all <a> tags within the divs and print their href attribute
-            a_tag = div.find("a", href=True)
-            details_url = _MENUS_URL_START + a_tag["href"]
+                details_url = _MENUS_URL_START + a_tag["href"]
+                ingredients, allergens = get_ingredients_and_allergens(details_url)
 
-            ingredients, allergens = get_ingredients_and_allergens(details_url)
-            print(ingredients)
-            print(allergens)
+                tags = get_dietary_tags(ingredients, allergens)
+                if "vegetarian" in current_section:
+                    if "vegan-vegetarian" not in tags:
+                        tags.append("vegan-vegetarian")
 
-            tags = get_dietary_tags(ingredients, allergens)
-
-            meals.append(
-                {
-                    "dhall": dhall_name,
-                    "name": name,
-                    "ingredients": ingredients,
-                    "allergens": allergens,
-                    "dietary_tags": tags,
-                }
-            )
+                meals.append(
+                    {
+                        "dhall": dhall_name,
+                        "name": name,
+                        "ingredients": ingredients,
+                        "allergens": allergens,
+                        "dietary_tags": tags,
+                    }
+                )
 
     return meals
 
@@ -173,7 +177,7 @@ def get_dietary_tags(ingredients, allergens):
 
     # TODO: get vegan/vegetarian to work
     # temporarily mark everything vegan-vegetarian, effectively ignoring this restriction
-    tags.append("vegan-vegetarian")
+    # tags.append("vegan-vegetarian")
 
     return tags
 
@@ -207,4 +211,5 @@ if __name__ == "__main__":
         print(info["name"])
         print("Ingredients:", ", ".join(info["ingredients"]))
         print("Allergens:", ", ".join(info["allergens"]))
+        print("Tags:", ",".join(info["dietary_tags"]))
         print()

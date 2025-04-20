@@ -17,3 +17,17 @@ repos:
         name: Update requirements.txt
         entry: bash -c 'pip freeze > requirements.txt && git add requirements.txt'
         language: system
+  - repo: local
+    hooks:
+      - id: update-requirements
+        name: Update requirements.txt
+        entry: bash -c 'pip freeze > requirements.txt && git add requirements.txt'
+        language: system
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: python -m pytest
+        language: system
+        pass_filenames: false
+        always_run: true

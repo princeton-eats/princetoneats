@@ -5,7 +5,6 @@ import os
 import sys
 
 dotenv.load_dotenv()
-# DATABASE_URL = os.environ["DATABASE_URL"]
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///default.db")
 DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://")
 

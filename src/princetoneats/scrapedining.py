@@ -6,6 +6,7 @@ from datetime import datetime
 
 _MENUS_URL_START = "https://menus.princeton.edu/dining/_Foodpro/online-menu/"
 _MEAL_NAME_CLASS = "pickmenucoldispname"
+_MEAL_SECTION_CLASS = "pickmenucolmenucat"
 _INGREDIENTS_CLASS = "labelingredientsvalue"
 _ALLERGENS_CLASS = "labelallergensvalue"
 
@@ -101,10 +102,10 @@ def get_meal_info(halls, date, meal_time):
         soup = BeautifulSoup(response.text, "html.parser")
 
         current_section = ""
-        for elem in soup.find_all(["h2", "div"]):
-            if elem.name == "h2":
+        for elem in soup.find_all("div"):
+            if elem.get("class") == [_MEAL_SECTION_CLASS]:
                 current_section = elem.get_text(strip=True).lower()
-            elif elem.name == "div" and elem.get("class") == [_MEAL_NAME_CLASS]:
+            elif elem.get("class") == [_MEAL_NAME_CLASS]:
                 name = elem.get_text(strip=True)
                 a_tag = elem.find("a", href=True)
                 if not a_tag:
@@ -112,9 +113,9 @@ def get_meal_info(halls, date, meal_time):
 
                 details_url = _MENUS_URL_START + a_tag["href"]
                 ingredients, allergens = get_ingredients_and_allergens(details_url)
-                tags = get_dietary_tags(ingredients, allergens)
 
-                if "vegetarian" in current_section or "vegan" in current_section:
+                tags = get_dietary_tags(ingredients, allergens)
+                if "vegetarian" in current_section:
                     if "vegan-vegetarian" not in tags:
                         tags.append("vegan-vegetarian")
 
@@ -210,4 +211,5 @@ if __name__ == "__main__":
         print(info["name"])
         print("Ingredients:", ", ".join(info["ingredients"]))
         print("Allergens:", ", ".join(info["allergens"]))
+        print("Tags:", ",".join(info["dietary_tags"]))
         print()

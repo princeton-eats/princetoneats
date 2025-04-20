@@ -17,4 +17,5 @@ build/
 
 Makefile
 
-test.sql
+*.db
+*.sql

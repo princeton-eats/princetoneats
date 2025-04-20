@@ -12,14 +12,18 @@ Flask==3.1.0
 gunicorn==23.0.0
 identify==2.6.9
 idna==3.10
+iniconfig==2.1.0
 itsdangerous==2.2.0
 Jinja2==3.1.6
 MarkupSafe==3.0.2
 nodeenv==1.9.1
 packaging==24.2
 platformdirs==4.3.7
+pluggy==1.5.0
 pre_commit==4.2.0
+-e git+https://github.com/princeton-eats/princetoneats.git@9cf214fc0c132b493ddee60d68e3333785a49e02#egg=princetoneats
 psycopg2-binary==2.9.10
+pytest==8.3.5
 python-dotenv==1.1.0
 PyYAML==6.0.2
 requests==2.32.3

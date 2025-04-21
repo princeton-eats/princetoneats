@@ -30,16 +30,17 @@
 
     <div class="container-fluid flex-fill d-flex justify-content-center align-items-center">
         <div class="row w-100 justify-content-center">
+        <center>
+        <h1 class="display-10">Good <span id="ampmSpan"></span> {{userFirstname}}</h1>
+        <h2 class="lead">
+            Here you can change your prefrences, get recommendations, and more
+        </h2>
+        </center>
 
-    <!-- Left Column (Header/Text) -->
+    <!-- Left Column -->
         <div class="col-md-5 text-center">
-            <h1 class="display-10">Good <span id="ampmSpan"></span> {{userFirstname}}</h1>
-            <h2 class="lead">
-                Here you can change your prefrences, get recommendations, and more
-            </h2>
-
             <div class="container">
-                <h5>Here are your favorite meals available today</h2>
+                <h5>Here are your favorite meals available today.</h2>
                 <table class="table table-bordered rounded-5">
                     <thead>
                       <tr>
@@ -64,36 +65,50 @@
             </div>
         </div>
 
-        <!-- Right Column (Image) -->
+        <!-- Right Column -->
         <div class="col-md-6 text-center">
             <div class="container">
-                <h5>Here is {{hall}}'s options for today.</h5>
+                <h5>{{hall}} is the best place to grab {{mealtime}} today.</h5>
+                <p>They have {{totalMeals}} meal{% if totalMeals != 1 %}s{% else %}{% endif %} that aligns with your preferences.</p>
                 <table class="table table-bordered rounded-5">
                     <thead>
                         <tr>
+                            <th></th>
                             <th>Meal</th>
                             <th>Ingredients</th>
                             <th>Allergens</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    {% for dhall, meals in grouped_meals.items() %}
+                        {% for meal in meals %}
                         <tr>
-                            <!-- <td>
-                                <button type="button{{classid}}"
-                                onclick='getDetails({{classid}})'>
-                                {{ classid }}
+                            <td>
+                                <button onclick='toggleIsFav({{ meal.name|tojson }})'>
+                                    {% if meal.is_fav %}
+                                        Remove
+                                    {% else %}
+                                        Add
+                                    {% endif %}
+                                    Favorite
                                 </button>
-                            </td> -->
-                            <td>blank</td>
-                            <td>blank</td>
-                            <td>blank</td>
-                        </tr>
-                    </tbody>
+                            </td>
+                            <td>{{ meal.name}}</td>
+
+                            <td>{{ meal.ingredients_string }}</td>
+
+                            <td>{{ meal.allergens_string }}</td>
+                    </tr>
+                    {% endfor %}
                 </table>
+            {% endfor %}
             </div>
         </div>
 
         </div>
+    </div>
+
+    <div class="buttons" style="margin-bottom: 40px;">
+        <button onclick="location.href='/find_meals'" class="custom-button" style="font-size: 28px; width: 260px;">FIND MEALS</button>
     </div>
 
     <div class="container-fluid, footer" style="padding: 5px;">

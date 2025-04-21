@@ -78,11 +78,11 @@ def get_ingredients_and_allergens(url):
             allergens = ["No allergens listed"]
             allergens_str = "No allergens listed"
 
-        print(ingredients)
-        print(allergens)
-        print(ingredients_str)
-        print(allergens_str)
-        print("----")
+        # print(ingredients)
+        # print(allergens)
+        # print(ingredients_str)
+        # print(allergens_str)
+        # print("----")
 
         return ingredients, allergens, ingredients_str, allergens_str
 

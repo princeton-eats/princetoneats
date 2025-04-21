@@ -6,6 +6,7 @@ import os
 import scrapedining
 import auth
 import re
+import datetime
 from collections import defaultdict
 
 import database
@@ -26,6 +27,9 @@ def home():
     # check session for user info
     user_info = flask.session.get("user_info")
     username = None if user_info is None else user_info["user"]
+
+    if username is not None:
+        return flask.redirect(flask.url_for("dashboard"))
 
     return flask.render_template("index.html", username=username)
 
@@ -51,7 +55,6 @@ def about():
 def dashboard():
     # check session for user info
     user_info = flask.session.get("user_info")
-    print(user_info["attributes"])
     username = None if user_info is None else user_info["user"]
     userFirstname = (
         None
@@ -61,13 +64,51 @@ def dashboard():
 
     if auth.is_authenticated():
         user_info = auth.authenticate()
-        preferences = database.get_user_prefs(user_info["user"])
+        preferences_dict = database.get_user_prefs(user_info["user"])
+        preferences = []
+        for pref in ["halal", "veg", "glutenfree", "dairyfree", "peanutfree"]:
+            if preferences_dict[pref]:
+                if pref == "veg":
+                    pref = "vegan-vegetarian"
+                preferences.append(pref)
 
-    meals_list = scrapedining.get_meal_info(["Roma"], None, "Breakfast")
-    print(f"Found {len(meals_list)} total meals")
-    print(f"Filtering with preferences: {preferences}")
+    # if auth.is_authenticated():
+    #     user_info = auth.authenticate()
+    #     preferences = database.get_user_prefs(user_info["user"])
+
+    # Yeh ncw is breaking the code
+
+    halls = [["Roma"], ["Forbes"], ["WB"], ["CJL"], ["Grad"]]
+    maxMeals = 0
+    curMeal = ""
+    bestDining = "hairline"
+
+    # can make this better
+    curhour = datetime.datetime.now().hour
+
+    if curhour < 9:
+        curMeal = "Breakfast"
+    elif curhour >= 9 and curhour < 14:
+        curMeal = "Lunch"
+    elif curhour >= 14:
+        curMeal = "Dinner"
+
+    for i in range(0, len(halls)):
+        meals_list = scrapedining.get_meal_info(halls[i], None, curMeal)
+        meals_list_withPref = scrapedining.filter_meals(meals_list, tags=preferences)
+        meal_list_len = len(meals_list_withPref)
+        print(meal_list_len)
+        if meal_list_len > maxMeals:
+            maxMeals = meal_list_len
+            bestDining = halls[i]
+
+    print(bestDining)
+
+    meals_list = scrapedining.get_meal_info(bestDining, None, curMeal)
+    # print(f"Found {len(meals_list)} total meals")
+    # print(f"Filtering with preferences: {preferences}")
     filtered_meals = scrapedining.filter_meals(meals_list, tags=preferences)
-    print(f"After filtering, {len(filtered_meals)} meals remain")
+    # print(f"After filtering, {len(filtered_meals)} meals remain")
 
     grouped_meals = defaultdict(list)
     for meal in filtered_meals:
@@ -75,7 +116,9 @@ def dashboard():
 
     return flask.render_template(
         "dashboard.html",
-        hall="Roma",
+        hall=bestDining[0],
+        mealtime=curMeal,
+        totalMeals=len(filtered_meals),
         grouped_meals=grouped_meals,
         username=username,
         userFirstname=userFirstname,
@@ -121,28 +164,30 @@ def meals_list():
     diningHall = flask.request.args.get("DHfilter", "").split(",")
     mealTimes = flask.request.args.get("MTfilter", "").split(",")
     preferences = flask.request.args.get("ARfilter", "").split(",")
-    user_info = flask.session.get("user_info")
-    username = None if user_info is None else user_info["user"]
 
     if len(preferences[0]) == 0:
         preferences = []
-
-    if auth.is_authenticated():
-        veg = "vegan-vegetarian" in preferences
-        halal = "halal" in preferences
-        glutenfree = "gluten-free" in preferences
-        dairyfree = "dairy-free" in preferences
-        peanutfree = "peanut-free" in preferences
-        user_info = auth.authenticate()
-        database.set_user_prefs(
-            user_info["user"], veg, halal, glutenfree, dairyfree, peanutfree
-        )
 
     meals_list = scrapedining.get_meal_info(diningHall, None, mealTimes[0])
     print(f"Found {len(meals_list)} total meals")
     print(f"Filtering with preferences: {preferences}")
     filtered_meals = scrapedining.filter_meals(meals_list, tags=preferences)
     print(f"After filtering, {len(filtered_meals)} meals remain")
+
+    username = None
+    if auth.is_authenticated():
+        username = flask.session.get("user_info")["user"]
+
+        veg = "vegan-vegetarian" in preferences
+        halal = "halal" in preferences
+        glutenfree = "gluten-free" in preferences
+        dairyfree = "dairy-free" in preferences
+        peanutfree = "peanut-free" in preferences
+        database.set_user_prefs(username, veg, halal, glutenfree, dairyfree, peanutfree)
+
+        for meal in meals_list:
+            print(meal["name"])
+            meal["is_fav"] = database.is_fav_meal(username, meal["name"])
 
     grouped_meals = defaultdict(list)
     for meal in filtered_meals:
@@ -151,6 +196,26 @@ def meals_list():
     return flask.render_template(
         "meals_list.html", grouped_meals=grouped_meals, username=username
     )
+
+
+# -----------------------------------------------------------------------
+
+
+@app.route("/updatefav", methods=["GET"])
+def updatefav():
+    if not auth.is_authenticated():
+        return
+
+    username = flask.session.get("user_info")["user"]
+
+    meal_name = flask.request.args.get("name")
+
+    if database.is_fav_meal(username, meal_name):
+        database.remove_fav_meal(username, meal_name)
+    else:
+        database.add_fav_meal(username, meal_name)
+
+    return flask.Response(200)
 
 
 # -----------------------------------------------------------------------

@@ -48,17 +48,32 @@
                             <h3>Dining hall: {{ dhall }}</h3>
                             <table class="table-bordered" style="border-radius:6px;">
                                 <tr>
+                                    {% if username %}
+                                    <th></th>
+                                    {% endif %}
                                     <th>Meal</th>
                                     <th>Ingredients</th>
                                     <th>Allergens</th>
                                 </tr>
                                 {% for meal in meals %}
                                 <tr>
-                                    <td>{{ meal["name"]}}</td>
+                                    {% if username %}
+                                    <td>
+                                        <button onclick='toggleIsFav({{ meal.name|tojson }})'>
+                                            {% if meal.is_favorite %}
+                                                Remove
+                                            {% else %}
+                                                Add
+                                            {% endif %}
+                                            Favorite
+                                        </button>
+                                    </td>
+                                    {% endif %}
+                                    <td>{{ meal.name}}</td>
 
-                                    <td>{{ meal["ingredients_string"] }}</td>
+                                    <td>{{ meal.ingredients_string }}</td>
 
-                                    <td>{{ meal["allergens_string"] }}</td>
+                                    <td>{{ meal.allergens_string }}</td>
                                 </tr>
                                 {% endfor %}
                             </table>
@@ -90,6 +105,26 @@
             Made by Achilles, Adham, Akuei, Ndongo, and Yusuf
         </center>
     </div>
+
+    <script>
+        'use strict';
+
+
+        function toggleIsFav(name) {
+            let url = '/updatefav?name=' + name;
+            if (request !== null)
+                request.abort();
+            request = new XMLHttpRequest();
+            request.onerror = handleError;
+            request.open('GET', url);
+            request.send();
+        }
+
+        function handleError() {
+            alert('There\'s been an error.');
+        }
+
+    </script>
 
 </body>
 </html>

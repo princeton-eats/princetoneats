@@ -10,7 +10,7 @@
          "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
          <link rel="stylesheet" href="static/css/base.css">
-         <link rel="stylesheet" href="static/css/meals_list.css">
+         <link rel="stylesheet" href="static/css/meals_list_c.css">
 
 </head>
 
@@ -37,64 +37,50 @@
         <div class="row w-75 justify-content-center">
 
             <div class="containerMeals col-md-9 text-center" >
-                {% if grouped_meals|length == 0 %}
-                    <div class="empty-results">
-                        <p>No meals found that match your criteria. Try adjusting your preferences or dining hall selection.</p>
-                    </div>
-                {% else %}
-                    <h2>Here are Your Options</h2>
-                    <div class="unroll-instruction">Click on a dining hall mat to unroll and see the meals</div>
-                    <hr class="line">
-
-                    <!-- Scroll indicators -->
-                    <div class="scroll-indicator scroll-left" id="scrollLeft">&#8249;</div>
-                    <div class="scroll-indicator scroll-right" id="scrollRight">&#8250;</div>
-
-                    <!-- Container for the single row of rolled mats -->
-                    <div class="dhall-container" id="dhallContainer">
+                <div class="containerMeals">
+                    {% if grouped_meals|length == 0 %}
+                        <p>Today is a weekend, please search for lunch options instead.</p>
+                    {% else %}
+                        <h2>Here are Your Options</h2> <!-- Include users queired preferences here -->
+                        <!-- <h5>Scroll over Ingredients and Allergens for Details</h5> -->
+                        <hr class="line">
                         {% for dhall, meals in grouped_meals.items() %}
-                            <!-- Each dining hall is a rolled mat that expands when clicked -->
-                            <div class="dhall-box" onclick="toggleMat(this)">
-                                <div class="mat-ribbon"></div>
-                                <h3 class="dhall-title">{{ dhall }}</h3>
-                                <div class="content">
-                                    <ul>
-                                        {% for meal in meals %}
-                                            <li class="meal-item">
-                                                <strong>{{ meal["name"] }}</strong>
-                                                <div>
-                                                    <span class="dropdown">
-                                                        Ingredients
-                                                        <div class="dropdown-content">
-                                                            <ul>
-                                                            {% for ingredient in meal["ingredients"] %}
-                                                                <li>{{ ingredient }}</li>
-                                                            {% endfor %}
-                                                            </ul>
-                                                        </div>
-                                                    </span>
+                            <h3>Dining hall: {{ dhall }}</h3>
+                            <table class="table-bordered" style="border-radius:6px;">
+                                <tr>
+                                    {% if username %}
+                                    <th></th>
+                                    {% endif %}
+                                    <th>Meal</th>
+                                    <th>Ingredients</th>
+                                    <th>Allergens</th>
+                                </tr>
+                                {% for meal in meals %}
+                                <tr>
+                                    {% if username %}
+                                    <td>
+                                        <button onclick='toggleIsFav({{ meal.name|tojson }})'>
+                                            {% if meal.is_fav %}
+                                                Remove
+                                            {% else %}
+                                                Add
+                                            {% endif %}
+                                            Favorite
+                                        </button>
+                                    </td>
+                                    {% endif %}
+                                    <td>{{ meal.name}}</td>
 
-                                                    <span class="dropdown">
-                                                        Allergens
-                                                        <div class="dropdown-content">
-                                                            <ul>
-                                                            {% for allergen in meal["allergens"] %}
-                                                                <li>{{ allergen }}</li>
-                                                            {% endfor %}
-                                                            </ul>
-                                                        </div>
-                                                    </span>
-                                                </div>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            </div>
+                                    <td>{{ meal.ingredients_string }}</td>
+
+                                    <td>{{ meal.allergens_string }}</td>
+                                </tr>
+                                {% endfor %}
+                            </table>
                         {% endfor %}
-                    </div>
-                {% endif %}
+                    {% endif %}
+                </div>
             </div>
-
             <div class="containerSmall col-md-3 text-center ms-md-4">
                 <h2>REMEMBER!</h2>
                 <div id="warning">
@@ -120,51 +106,6 @@
         </center>
     </div>
 
-    <script>
-        // Add interactive functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            // Smooth scroll functionality
-            const container = document.getElementById('dhallContainer');
-            const scrollLeftBtn = document.getElementById('scrollLeft');
-            const scrollRightBtn = document.getElementById('scrollRight');
-
-            if (scrollLeftBtn && scrollRightBtn && container) {
-                // Scroll buttons
-                scrollLeftBtn.addEventListener('click', function(e) {
-                    container.scrollBy({ left: -300, behavior: 'smooth' });
-                    e.stopPropagation();
-                });
-
-                scrollRightBtn.addEventListener('click', function(e) {
-                    container.scrollBy({ left: 300, behavior: 'smooth' });
-                    e.stopPropagation();
-                });
-            }
-
-            // Prevent dropdown clicks from toggling the mat
-            const dropdowns = document.querySelectorAll('.dropdown');
-            dropdowns.forEach(dropdown => {
-                dropdown.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                });
-            });
-        });
-
-        // Toggle mat expansion
-        function toggleMat(element) {
-            // Check if the click was on a dropdown
-            if (event.target.closest('.dropdown-content') || event.target.closest('.dropdown')) {
-                return;
-            }
-
-            // Toggle the expanded class
-            element.classList.toggle('expanded');
-
-            // Scroll the mat into view if it's expanded
-            if (element.classList.contains('expanded')) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-            }
-        }
-    </script>
+    <script src="static/favorites.js"></script>
 </body>
 </html>

@@ -65,16 +65,28 @@ def get_ingredients_and_allergens(url):
 
         soup = BeautifulSoup(response.text, "html.parser")
         ingredients_span = soup.find("span", class_=_INGREDIENTS_CLASS)
-        ingredients = ingredients_span.get_text().split(",")
-        if len(ingredients) == 0:
+        if ingredients_span is None:
             ingredients = ["No ingredients found"]
+            ingredients_str = "No ingredients found"
+        else:
+            ingredients = ingredients_span.get_text().split(",")
+            ingredients_str = ingredients_span.get_text()
+            if len(ingredients) == 0:
+                ingredients = ["No ingredients found"]
+                ingredients_str = "No ingredients found"
 
         allergens_span = soup.find("span", class_=_ALLERGENS_CLASS)
-        allergens = allergens_span.get_text().split(",")
-        if len(allergens[0]) == 0:
+        if allergens_span is None:
             allergens = ["No allergens listed"]
+            allergens_str = "No allergens listed"
+        else:
+            allergens = allergens_span.get_text().split(",")
+            allergens_str = allergens_span.get_text()
+            if len(allergens) == 0:
+                allergens = ["No allergens listed"]
+                allergens_str = "No allergens listed"
 
-        return ingredients, allergens
+        return ingredients, allergens, ingredients_str, allergens_str
 
     except Exception as e:
         return f"Error retrieving ingredients: {e}", ""
@@ -112,7 +124,9 @@ def get_meal_info(halls, date, meal_time):
                     continue
 
                 details_url = _MENUS_URL_START + a_tag["href"]
-                ingredients, allergens = get_ingredients_and_allergens(details_url)
+                ingredients, allergens, ingredients_string, allergens_string = (
+                    get_ingredients_and_allergens(details_url)
+                )
 
                 tags = get_dietary_tags(ingredients, allergens)
                 if "vegetarian" in current_section:
@@ -126,6 +140,8 @@ def get_meal_info(halls, date, meal_time):
                         "ingredients": ingredients,
                         "allergens": allergens,
                         "dietary_tags": tags,
+                        "ingredients_string": ingredients_string,
+                        "allergens_string": allergens_string,
                     }
                 )
 
@@ -174,10 +190,6 @@ def get_dietary_tags(ingredients, allergens):
 
     if not any("peanut" in a for a in all_lower):
         tags.append("peanut-free")
-
-    # TODO: get vegan/vegetarian to work
-    # temporarily mark everything vegan-vegetarian, effectively ignoring this restriction
-    # tags.append("vegan-vegetarian")
 
     return tags
 

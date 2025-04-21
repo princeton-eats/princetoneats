@@ -65,24 +65,26 @@ def get_ingredients_and_allergens(url):
 
         soup = BeautifulSoup(response.text, "html.parser")
         ingredients_span = soup.find("span", class_=_INGREDIENTS_CLASS)
-        ingredients = ingredients_span.get_text().split(",")
-        ingredients_str = ingredients_span.get_text()
-        if len(ingredients) == 0:
+        if ingredients_span is None:
             ingredients = ["No ingredients found"]
             ingredients_str = "No ingredients found"
+        else:
+            ingredients = ingredients_span.get_text().split(",")
+            ingredients_str = ingredients_span.get_text()
+            if len(ingredients) == 0:
+                ingredients = ["No ingredients found"]
+                ingredients_str = "No ingredients found"
 
         allergens_span = soup.find("span", class_=_ALLERGENS_CLASS)
-        allergens = allergens_span.get_text().split(",")
-        allergens_str = allergens_span.get_text()
-        if len(allergens) == 0:
+        if allergens_span is None:
             allergens = ["No allergens listed"]
             allergens_str = "No allergens listed"
-
-        # print(ingredients)
-        # print(allergens)
-        # print(ingredients_str)
-        # print(allergens_str)
-        # print("----")
+        else:
+            allergens = allergens_span.get_text().split(",")
+            allergens_str = allergens_span.get_text()
+            if len(allergens) == 0:
+                allergens = ["No allergens listed"]
+                allergens_str = "No allergens listed"
 
         return ingredients, allergens, ingredients_str, allergens_str
 
@@ -188,10 +190,6 @@ def get_dietary_tags(ingredients, allergens):
 
     if not any("peanut" in a for a in all_lower):
         tags.append("peanut-free")
-
-    # TODO: get vegan/vegetarian to work
-    # temporarily mark everything vegan-vegetarian, effectively ignoring this restriction
-    # tags.append("vegan-vegetarian")
 
     return tags
 

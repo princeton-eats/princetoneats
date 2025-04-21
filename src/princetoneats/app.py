@@ -109,6 +109,8 @@ def dashboard():
     # print(f"Filtering with preferences: {preferences}")
     filtered_meals = scrapedining.filter_meals(meals_list, tags=preferences)
     # print(f"After filtering, {len(filtered_meals)} meals remain")
+    for meal in meals_list:
+        meal["is_fav"] = database.is_fav_meal(username, meal["name"])
 
     grouped_meals = defaultdict(list)
     for meal in filtered_meals:
@@ -186,7 +188,6 @@ def meals_list():
         database.set_user_prefs(username, veg, halal, glutenfree, dairyfree, peanutfree)
 
         for meal in meals_list:
-            print(meal["name"])
             meal["is_fav"] = database.is_fav_meal(username, meal["name"])
 
     grouped_meals = defaultdict(list)
@@ -214,6 +215,9 @@ def updatefav():
         database.remove_fav_meal(username, meal_name)
     else:
         database.add_fav_meal(username, meal_name)
+
+    print(meal_name)
+    print(database.is_fav_meal(username, meal_name))
 
     return flask.Response(200)
 

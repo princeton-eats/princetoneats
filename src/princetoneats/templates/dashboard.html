@@ -119,30 +119,31 @@
         </center>
     </div>
 
+    <script src="static/favorites.js"></script>
+
     <script>
-    'use strict';
+        'use strict';
 
-    function getAmPm() {
-            let dateTime = new Date();
-            let hours = dateTime.getHours();
-            let amPm = (hours < 12) ? 'morning' : 'afternoon';
-            let ampmSpan = document.getElementById('ampmSpan');
-            ampmSpan.innerHTML = amPm;
-         }
+        function getAmPm() {
+                let dateTime = new Date();
+                let hours = dateTime.getHours();
+                let amPm = (hours < 12) ? 'morning' : 'afternoon';
+                let ampmSpan = document.getElementById('ampmSpan');
+                ampmSpan.innerHTML = amPm;
+            }
 
-    function setupHeader() {
-        getAmPm();
-        let apInterval = window.setInterval(getAmPm, 1000);
-        window.addEventListener('beforeunload',
-            function(e) {window.clearInterval(apInterval);})
+        function setupHeader() {
+            getAmPm();
+            let apInterval = window.setInterval(getAmPm, 1000);
+            window.addEventListener('beforeunload',
+                function(e) {window.clearInterval(apInterval);})
+            }
+
+        function setup() {
+            setupHeader();
         }
 
-    function setup() {
-        setupHeader();
-    }
-
-    document.addEventListener('DOMContentLoaded', setup);
-
+        document.addEventListener('DOMContentLoaded', setup);
     </script>
 </body>
 </html>

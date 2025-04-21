@@ -60,7 +60,7 @@
                                     {% if username %}
                                     <td>
                                         <button onclick='toggleIsFav({{ meal.name|tojson }})'>
-                                            {% if meal.is_favorite %}
+                                            {% if meal.is_fav %}
                                                 Remove
                                             {% else %}
                                                 Add
@@ -106,25 +106,6 @@
         </center>
     </div>
 
-    <script>
-        'use strict';
-
-
-        function toggleIsFav(name) {
-            let url = '/updatefav?name=' + name;
-            if (request !== null)
-                request.abort();
-            request = new XMLHttpRequest();
-            request.onerror = handleError;
-            request.open('GET', url);
-            request.send();
-        }
-
-        function handleError() {
-            alert('There\'s been an error.');
-        }
-
-    </script>
-
+    <script src="static/favorites.js"></script>
 </body>
 </html>

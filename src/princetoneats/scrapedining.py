@@ -57,39 +57,37 @@ def get_details_url(formatted_hall, formatted_date, formatted_meal, location_num
 
 
 def get_ingredients_and_allergens(url):
-    """Scrape both ingredients and allergens from a meal's detail page, filtering
-    out default disclaimers."""
+    """Scrape both ingredients and allergens from a meal's detail page, with safe fallbacks."""
     try:
         response = requests.get(url)
         response.raise_for_status()
 
         soup = BeautifulSoup(response.text, "html.parser")
+
         ingredients_span = soup.find("span", class_=_INGREDIENTS_CLASS)
-        if ingredients_span is None:
-            ingredients = ["No ingredients found"]
-            ingredients_str = "No ingredients found"
+        if ingredients_span:
+            ingredients = [
+                i.strip() for i in ingredients_span.get_text().split(",") if i.strip()
+            ]
+            if not ingredients:
+                ingredients = ["Not listed"]
         else:
-            ingredients = ingredients_span.get_text().split(",")
-            ingredients_str = ingredients_span.get_text()
-            if len(ingredients) == 0:
-                ingredients = ["No ingredients found"]
-                ingredients_str = "No ingredients found"
+            ingredients = ["Not listed"]
 
         allergens_span = soup.find("span", class_=_ALLERGENS_CLASS)
-        if allergens_span is None:
-            allergens = ["No allergens listed"]
-            allergens_str = "No allergens listed"
-        else:
-            allergens = allergens_span.get_text().split(",")
-            allergens_str = allergens_span.get_text()
-            if len(allergens) == 0:
+        if allergens_span:
+            allergens = [
+                a.strip() for a in allergens_span.get_text().split(",") if a.strip()
+            ]
+            if not allergens:
                 allergens = ["No allergens listed"]
-                allergens_str = "No allergens listed"
+        else:
+            allergens = ["No allergens listed"]
 
-        return ingredients, allergens, ingredients_str, allergens_str
+        return ingredients, allergens
 
     except Exception as e:
-        return f"Error retrieving ingredients: {e}", ""
+        return [f"Error retrieving ingredients: {e}"], ["Unknown allergens"]
 
 
 def get_meal_info(halls, date, meal_time):

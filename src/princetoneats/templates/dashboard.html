@@ -35,7 +35,7 @@
         <center>
         <h1 class="display-10">Good <span id="ampmSpan"></span> {{userFirstname}}</h1>
         <h2 class="lead">
-            Here you can change your prefrences, get recommendations, and more
+            Here you can change your prefrences, get recommendations, and more.
         </h2>
         </center>
 
@@ -69,40 +69,44 @@
 
         <!-- Right Column -->
         <div class="col-md-6 text-center">
-            <div class="container">
-                <h5>{{hall}} is the best place to grab {{mealtime}} today.</h5>
-                <p>They have {{totalMeals}} meal{% if totalMeals != 1 %}s{% else %}{% endif %} that aligns with your preferences.</p>
-                <table class="table table-bordered rounded-5">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Meal</th>
-                            <th>Ingredients</th>
-                            <th>Allergens</th>
+            <div class="container" style="overflow: scroll !important; height: 400px;">
+                {% if hall == "hairline" %}
+                   <p>Sorry! No meals are available that match your stored preferences for {{mealtime}}.</p>
+                {% else %}
+                    <h5 class="sticky-top headerCustom">{{hall}} is the best place to grab {{mealtime}} today.</h5>
+                    <p>They have {{totalMeals}} meal{% if totalMeals != 1 %}s{% else %}{% endif %} that aligns with your preferences.</p>
+                    <table class="table table-bordered rounded-5">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Meal</th>
+                                <th>Ingredients</th>
+                                <th>Allergens</th>
+                            </tr>
+                        </thead>
+                        {% for dhall, meals in grouped_meals.items() %}
+                            {% for meal in meals %}
+                            <tr>
+                                <td>
+                                    <button onclick='toggleIsFav({{ meal.name|tojson }})'>
+                                        {% if meal.is_fav %}
+                                            Remove
+                                        {% else %}
+                                            Add
+                                        {% endif %}
+                                        Favorite
+                                    </button>
+                                </td>
+                                <td>{{ meal.name}}</td>
+
+                                <td>{{ meal.ingredients_string }}</td>
+
+                                <td>{{ meal.allergens_string }}</td>
                         </tr>
-                    </thead>
-                    {% for dhall, meals in grouped_meals.items() %}
-                        {% for meal in meals %}
-                        <tr>
-                            <td>
-                                <button onclick='toggleIsFav({{ meal.name|tojson }})'>
-                                    {% if meal.is_fav %}
-                                        Remove
-                                    {% else %}
-                                        Add
-                                    {% endif %}
-                                    Favorite
-                                </button>
-                            </td>
-                            <td>{{ meal.name}}</td>
-
-                            <td>{{ meal.ingredients_string }}</td>
-
-                            <td>{{ meal.allergens_string }}</td>
-                    </tr>
-                    {% endfor %}
-                </table>
-            {% endfor %}
+                        {% endfor %}
+                    </table>
+                {% endfor %}
+                {% endif %}
             </div>
         </div>
 

@@ -76,9 +76,7 @@ def dashboard():
     #     user_info = auth.authenticate()
     #     preferences = database.get_user_prefs(user_info["user"])
 
-    # Yeh ncw is breaking the code
-
-    halls = [["Roma"], ["Forbes"], ["WB"], ["CJL"], ["Grad"]]
+    halls = [["Roma"], ["Forbes"], ["WB"], ["YN"], ["CJL"], ["Grad"]]
     maxMeals = 0
     curMeal = ""
     bestDining = "hairline"
@@ -103,28 +101,42 @@ def dashboard():
             bestDining = halls[i]
 
     print(bestDining)
+    if bestDining != "hairline":
+        meals_list = scrapedining.get_meal_info(bestDining, None, curMeal)
+        # print(f"Found {len(meals_list)} total meals")
+        # print(f"Filtering with preferences: {preferences}")
+        filtered_meals = scrapedining.filter_meals(meals_list, tags=preferences)
+        # print(f"After filtering, {len(filtered_meals)} meals remain")
+        for meal in meals_list:
+            meal["is_fav"] = database.is_fav_meal(username, meal["name"])
 
-    meals_list = scrapedining.get_meal_info(bestDining, None, curMeal)
-    # print(f"Found {len(meals_list)} total meals")
-    # print(f"Filtering with preferences: {preferences}")
-    filtered_meals = scrapedining.filter_meals(meals_list, tags=preferences)
-    # print(f"After filtering, {len(filtered_meals)} meals remain")
-    for meal in meals_list:
-        meal["is_fav"] = database.is_fav_meal(username, meal["name"])
+        grouped_meals = defaultdict(list)
+        for meal in filtered_meals:
+            grouped_meals[meal["dhall"]].append(meal)
+            # dhallFinal = grouped_meals[meal["dhall"]]
 
-    grouped_meals = defaultdict(list)
-    for meal in filtered_meals:
-        grouped_meals[meal["dhall"]].append(meal)
+        print(grouped_meals)
+        dhall = next(iter(grouped_meals))
 
-    return flask.render_template(
-        "dashboard.html",
-        hall=bestDining[0],
-        mealtime=curMeal,
-        totalMeals=len(filtered_meals),
-        grouped_meals=grouped_meals,
-        username=username,
-        userFirstname=userFirstname,
-    )
+        return flask.render_template(
+            "dashboard.html",
+            hall=dhall,
+            mealtime=curMeal,
+            totalMeals=len(filtered_meals),
+            grouped_meals=grouped_meals,
+            username=username,
+            userFirstname=userFirstname,
+        )
+    else:
+        return flask.render_template(
+            "dashboard.html",
+            hall=bestDining,
+            mealtime=curMeal,
+            totalMeals="Null",
+            grouped_meals="Null",
+            username=username,
+            userFirstname=userFirstname,
+        )
 
 
 # Find Meals Page

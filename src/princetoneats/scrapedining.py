@@ -64,21 +64,21 @@ def get_ingredients_and_allergens(url):
 
         soup = BeautifulSoup(response.text, "html.parser")
 
+        # Handle ingredients
         ingredients_span = soup.find("span", class_=_INGREDIENTS_CLASS)
         if ingredients_span:
-            ingredients = [
-                i.strip() for i in ingredients_span.get_text().split(",") if i.strip()
-            ]
+            raw_ingredients = ingredients_span.get_text(strip=True)
+            ingredients = [i.strip() for i in raw_ingredients.split(",") if i.strip()]
             if not ingredients:
-                ingredients = ["Not listed"]
+                ingredients = ["No ingredients found"]
         else:
-            ingredients = ["Not listed"]
+            ingredients = ["No ingredients found"]
 
+        # Handle allergens
         allergens_span = soup.find("span", class_=_ALLERGENS_CLASS)
         if allergens_span:
-            allergens = [
-                a.strip() for a in allergens_span.get_text().split(",") if a.strip()
-            ]
+            raw_allergens = allergens_span.get_text(strip=True)
+            allergens = [a.strip() for a in raw_allergens.split(",") if a.strip()]
             if not allergens:
                 allergens = ["No allergens listed"]
         else:
@@ -88,6 +88,34 @@ def get_ingredients_and_allergens(url):
 
     except Exception as e:
         return [f"Error retrieving ingredients: {e}"], ["Unknown allergens"]
+
+
+# def get_ingredients_and_allergens(url):
+#     """Scrape both ingredients and allergens from a meal's detail page, filtering
+#     out default disclaimers."""
+#     try:
+#         response = requests.get(url)
+#         response.raise_for_status()
+
+#         soup = BeautifulSoup(response.text, "html.parser")
+#         ingredients_span = soup.find("span", class_=_INGREDIENTS_CLASS)
+#         ingredients = ingredients_span.get_text().split(",")
+#         # if len(ingredients) == 0:
+#         #     ingredients = ["No ingredients found"]
+#         if ingredients == None:
+#             ingredients = ["No ingredients found"]
+
+#         allergens_span = soup.find("span", class_=_ALLERGENS_CLASS)
+#         allergens = allergens_span.get_text().split(",")
+#         # if len(allergens[0]) == 0:
+#         #     allergens = ["No allergens listed"]
+#         if allergens[0] == None:
+#             allergens = ["No allergens listed"]
+
+#         return ingredients, allergens
+
+#     except Exception as e:
+#         return f"Error retrieving ingredients: {e}", ""
 
 
 def get_meal_info(halls, date, meal_time):
@@ -122,9 +150,7 @@ def get_meal_info(halls, date, meal_time):
                     continue
 
                 details_url = _MENUS_URL_START + a_tag["href"]
-                ingredients, allergens, ingredients_string, allergens_string = (
-                    get_ingredients_and_allergens(details_url)
-                )
+                ingredients, allergens = get_ingredients_and_allergens(details_url)
 
                 tags = get_dietary_tags(ingredients, allergens)
                 if "vegetarian" in current_section:
@@ -138,8 +164,6 @@ def get_meal_info(halls, date, meal_time):
                         "ingredients": ingredients,
                         "allergens": allergens,
                         "dietary_tags": tags,
-                        "ingredients_string": ingredients_string,
-                        "allergens_string": allergens_string,
                     }
                 )
 
@@ -188,6 +212,10 @@ def get_dietary_tags(ingredients, allergens):
 
     if not any("peanut" in a for a in all_lower):
         tags.append("peanut-free")
+
+    # TODO: get vegan/vegetarian to work
+    # temporarily mark everything vegan-vegetarian, effectively ignoring this restriction
+    # tags.append("vegan-vegetarian")
 
     return tags
 

@@ -2,14 +2,12 @@
 .containerMeals {
    max-width: 1200px;
    padding: 30px;
-   /* background-color: #f8c471; */
+   height: 500px;
    padding: 30px;
    border-radius: 10px;
    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
    text-align: left;
-   overflow-x: auto;
 }
-
 /* main container style */
 .containerSmall {
    max-width: 250px;

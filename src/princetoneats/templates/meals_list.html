@@ -41,13 +41,13 @@
 
             <div class="containerMeals col-md-9 text-center" style="height: 600px;">
                 {% if grouped_meals|length == 0 %}
-                        <p>Today is a weekend, please search for lunch options instead.</p>
-                    {% else %}
-                        <h2><underline>Here are Your Options</underline></h2> <!-- Include users queired preferences here, -ms-text-overflow -->
+                        <p>Sorry! We couldn't find any meals to match your outlined preferences. Please conduct another search. </p>
+                {% else %}
+                        <h2>Here are Your Options</h2> <!-- Include users queired preferences here, -ms-text-overflow -->
                 <div class="containerMeals" style="overflow: scroll !important;">
                         {% for dhall, meals in grouped_meals.items() %}
-                            <h3 class="sticky-top" style="border-radius: 5px; background-color: #4F518C; color:white; text-align: center;">Dining hall: {{ dhall }}</h3>
-                            <table class="table-bordered" style="border-radius:6px;">
+                            <h3 class="sticky-top headerCustom">Dining hall: {{ dhall }}</h3>
+                            <table class="table-bordered" style="border-radius: 5px !important;">
                                 <tr>
                                     {% if username %}
                                     <th></th>

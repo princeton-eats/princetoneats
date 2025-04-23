@@ -8,6 +8,7 @@ import auth
 import re
 import datetime
 from collections import defaultdict
+import asyncio
 
 import database
 
@@ -62,47 +63,47 @@ def dashboard():
         else user_info["attributes"]["displayname"][0].split(" ")[0]
     )
 
+    preferences = []
     if auth.is_authenticated():
         user_info = auth.authenticate()
         preferences_dict = database.get_user_prefs(user_info["user"])
-        preferences = []
         for pref in ["halal", "veg", "glutenfree", "dairyfree", "peanutfree"]:
-            if preferences_dict[pref]:
-                if pref == "veg":
-                    pref = "vegan-vegetarian"
-                preferences.append(pref)
+            if preferences_dict.get(pref):
+                tag = (
+                    "vegan-vegetarian"
+                    if pref == "veg"
+                    else pref.replace("glutenfree", "gluten-free")
+                    .replace("dairyfree", "dairy-free")
+                    .replace("peanutfree", "peanut-free")
+                )
+                preferences.append(tag)
 
     halls = [["Roma"], ["Forbes"], ["WB"], ["YN"], ["CJL"], ["Grad"]]
     maxMeals = 0
-    curMeal = ""
     bestDining = "hairline"
 
-    # can make this better
+    # determine current meal
     curhour = datetime.datetime.now().hour
-
     if curhour < 9:
         curMeal = "Breakfast"
-    elif curhour >= 9 and curhour < 14:
+    elif curhour < 14:
         curMeal = "Lunch"
-    elif curhour >= 14:
+    else:
         curMeal = "Dinner"
 
-    for i in range(0, len(halls)):
-        meals_list = scrapedining.get_meal_info(halls[i], None, curMeal)
+    # find dining hall with most preferred meals
+    for hall in halls:
+        meals_list = asyncio.run(scrapedining.get_meal_info(hall, None, curMeal))
         meals_list_withPref = scrapedining.filter_meals(meals_list, tags=preferences)
-        meal_list_len = len(meals_list_withPref)
-        print(meal_list_len)
-        if meal_list_len > maxMeals:
-            maxMeals = meal_list_len
-            bestDining = halls[i]
+        if len(meals_list_withPref) > maxMeals:
+            maxMeals = len(meals_list_withPref)
+            bestDining = hall
 
-    print(bestDining)
+    # fetch and filter meals for the best hall
     if bestDining != "hairline":
-        meals_list = scrapedining.get_meal_info(bestDining, None, curMeal)
-        # print(f"Found {len(meals_list)} total meals")
-        # print(f"Filtering with preferences: {preferences}")
+        meals_list = asyncio.run(scrapedining.get_meal_info(bestDining, None, curMeal))
         filtered_meals = scrapedining.filter_meals(meals_list, tags=preferences)
-        # print(f"After filtering, {len(filtered_meals)} meals remain")
+
         for meal in meals_list:
             meal["is_fav"] = database.is_fav_meal(username, meal["name"])
 
@@ -111,7 +112,6 @@ def dashboard():
             grouped_meals[meal["dhall"]].append(meal)
 
         dhall = next(iter(grouped_meals))
-
         return flask.render_template(
             "dashboard.html",
             hall=dhall,
@@ -142,17 +142,16 @@ def find_meals():
     gluten_free = False
     dairy_free = False
     peanut_free = False
-    user_info = flask.session.get("user_info")
 
     if auth.is_authenticated():
         user_info = auth.authenticate()
         preferences = database.get_user_prefs(user_info["user"])
-        if preferences is not None:
-            vegan_vegetarian = preferences["veg"]
-            halal = preferences["halal"]
-            gluten_free = preferences["glutenfree"]
-            dairy_free = preferences["dairyfree"]
-            peanut_free = preferences["peanutfree"]
+        if preferences:
+            vegan_vegetarian = preferences.get("veg", False)
+            halal = preferences.get("halal", False)
+            gluten_free = preferences.get("glutenfree", False)
+            dairy_free = preferences.get("dairyfree", False)
+            peanut_free = preferences.get("peanutfree", False)
 
     return flask.render_template(
         "find_meals.html",
@@ -162,9 +161,6 @@ def find_meals():
         dairy_free=dairy_free,
         peanut_free=peanut_free,
     )
-
-
-# -----------------------------------------------------------------------
 
 
 # Meals List Page
@@ -177,26 +173,21 @@ def meals_list():
     print(mealTimes)
     print(preferences)
 
-    if len(preferences[0]) == 0:
-        preferences = [["nothing"]]
+    if preferences == [""]:
+        preferences = []
 
-    meals_list = scrapedining.get_meal_info(diningHall, None, mealTimes[0])
-    print(f"Found {len(meals_list)} total meals")
-    print(f"Filtering with preferences: {preferences}")
+    meals_list = asyncio.run(scrapedining.get_meal_info(diningHall, None, mealTimes[0]))
     filtered_meals = scrapedining.filter_meals(meals_list, tags=preferences)
-    print(f"After filtering, {len(filtered_meals)} meals remain")
 
     username = None
     if auth.is_authenticated():
         username = flask.session.get("user_info")["user"]
-
         veg = "vegan-vegetarian" in preferences
         halal = "halal" in preferences
         glutenfree = "gluten-free" in preferences
         dairyfree = "dairy-free" in preferences
         peanutfree = "peanut-free" in preferences
         database.set_user_prefs(username, veg, halal, glutenfree, dairyfree, peanutfree)
-
         for meal in meals_list:
             meal["is_fav"] = database.is_fav_meal(username, meal["name"])
 
@@ -224,7 +215,6 @@ def updatefav():
         return
 
     username = flask.session.get("user_info")["user"]
-
     meal_name = flask.request.args.get("name")
 
     if database.is_fav_meal(username, meal_name):
@@ -232,28 +222,22 @@ def updatefav():
     else:
         database.add_fav_meal(username, meal_name)
 
-    print(meal_name)
-    print(database.is_fav_meal(username, meal_name))
-
-    return flask.Response(200)
+    return flask.Response(status=200)
 
 
 # -----------------------------------------------------------------------
 
 
-# CAS Authenitcation Logic
+# CAS Authentication Logic
 @app.route("/logincas", methods=["GET"])
 def logincas():
-    # Log in to CAS and redirect home
-    user_info = auth.authenticate()
-    username = user_info["user"]
-    print(username)
+    # authenticate for side-effects, but we don't need to keep the return value
+    auth.authenticate()
     return flask.redirect(flask.url_for("dashboard"))
 
 
 @app.route("/logoutcas", methods=["GET"])
 def logoutcas():
-    # Log out of the CAS session then redirect home
     logout_url = (
         auth._CAS_URL
         + "logout?service="
@@ -264,7 +248,6 @@ def logoutcas():
 
 @app.route("/logoutapp", methods=["GET"])
 def logoutapp():
-    # Log out of the application and redirect home
     flask.session.clear()
     return flask.redirect(flask.url_for("home"))
 

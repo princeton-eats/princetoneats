@@ -16,6 +16,7 @@ dotenv==0.9.9
 filelock==3.18.0
 Flask==3.1.0
 frozenlist==1.6.0
+greenlet==3.2.1
 gunicorn==23.0.0
 identify==2.6.9
 idna==3.10
@@ -32,7 +33,6 @@ packaging==24.2
 platformdirs==4.3.7
 pluggy==1.5.0
 pre_commit==4.2.0
--e git+https://github.com/princeton-eats/princetoneats.git@54635f6b02aedb58ef2ca85c101a0e8983434591#egg=princetoneats
 propcache==0.3.1
 psycopg2-binary==2.9.10
 pylint==3.3.6

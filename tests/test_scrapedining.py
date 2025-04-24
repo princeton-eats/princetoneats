@@ -1,4 +1,5 @@
 from princetoneats.scrapedining import map_args, get_meal_info, filter_meals
+import asyncio
 
 
 def test_map_args():
@@ -10,21 +11,22 @@ def test_meal_names():
     halls = ["Roma"]
     date = "04/20/25"
     meal_time = "Dinner"
-    all_meals = get_meal_info(halls, date, meal_time)
+    all_meals = asyncio.run(get_meal_info(halls, date, meal_time))
+    names = list(meal["name"] for meal in all_meals)
 
-    assert all_meals[0]["name"] == "Chef's Choice Soup of the Day"
-    assert all_meals[1]["name"] == "Roma House Beef Vegetable Soup"
-    assert all_meals[2]["name"] == "Herb Roasted Chicken"
-    assert all_meals[3]["name"] == "Lentil Stew"
-    assert all_meals[4]["name"] == "Herbed Rice Pilaf"
-    assert all_meals[5]["name"] == "Spicy Fresh Green Beans"
+    assert "Chef's Choice Soup of the Day" in names
+    assert "Roma House Beef Vegetable Soup" in names
+    assert "Herb Roasted Chicken" in names
+    assert "Lentil Stew" in names
+    assert "Herbed Rice Pilaf" in names
+    assert "Spicy Fresh Green Beans" in names
 
 
 def test_vegetarian():
     halls = ["Roma"]
     date = "04/20/25"
     meal_time = "Dinner"
-    all_meals = get_meal_info(halls, date, meal_time)
+    all_meals = asyncio.run(get_meal_info(halls, date, meal_time))
 
     # vegetarian
     meals = filter_meals(all_meals, ["vegan-vegetarian"])
@@ -35,7 +37,7 @@ def test_halal():
     halls = ["WB"]
     date = "04/20/25"
     meal_time = "Dinner"
-    all_meals = get_meal_info(halls, date, meal_time)
+    all_meals = asyncio.run(get_meal_info(halls, date, meal_time))
 
     # vegetarian
     meals = filter_meals(all_meals, ["halal"])

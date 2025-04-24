@@ -104,8 +104,9 @@ def dashboard():
         meals_list = asyncio.run(scrapedining.get_meal_info(bestDining, None, curMeal))
         filtered_meals = scrapedining.filter_meals(meals_list, tags=preferences)
 
+        fav_meals = database.get_fav_meals(username)
         for meal in meals_list:
-            meal["is_fav"] = database.is_fav_meal(username, meal["name"])
+            meal["is_fav"] = meal["name"] in fav_meals
 
         grouped_meals = defaultdict(list)
         for meal in filtered_meals:
@@ -188,8 +189,10 @@ def meals_list():
         dairyfree = "dairy-free" in preferences
         peanutfree = "peanut-free" in preferences
         database.set_user_prefs(username, veg, halal, glutenfree, dairyfree, peanutfree)
+
+        fav_meals = database.get_fav_meals(username)
         for meal in meals_list:
-            meal["is_fav"] = database.is_fav_meal(username, meal["name"])
+            meal["is_fav"] = meal["name"] in fav_meals
 
     grouped_meals = defaultdict(list)
     for meal in filtered_meals:

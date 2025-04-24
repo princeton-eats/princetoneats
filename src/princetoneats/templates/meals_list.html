@@ -83,7 +83,7 @@
                                 <tr>
                                     {% if username %}
                                     <td>
-                                        <button onclick='toggleIsFav({{ meal.name|tojson }})'>
+                                        <button class='favorites' onclick='toggleIsFav({{ meal.name|tojson }})'>
                                             {% if meal.is_fav %}Remove{% else %}Add{% endif %} Favorite
                                         </button>
                                     </td>

@@ -1,5 +1,6 @@
 # Created by Yusuf, Adham, Ndongo, Achilles, Akuei
 
+import random
 import flask
 import dotenv
 import os
@@ -78,10 +79,6 @@ def dashboard():
                 )
                 preferences.append(tag)
 
-    halls = [["Roma"], ["Forbes"], ["WB"], ["YN"], ["CJL"], ["Grad"]]
-    maxMeals = 0
-    bestDining = "hairline"
-
     # determine current meal
     curhour = datetime.datetime.now().hour
     if curhour < 9:
@@ -91,17 +88,21 @@ def dashboard():
     else:
         curMeal = "Dinner"
 
+    halls = [["Roma"], ["Forbes"], ["WB"], ["YN"], ["CJL"], ["Grad"]]
+    random.shuffle(halls)
+
+    best_dhall = None
+
     # find dining hall with most preferred meals
     for hall in halls:
         meals_list = asyncio.run(scrapedining.get_meal_info(hall, None, curMeal))
         meals_list_withPref = scrapedining.filter_meals(meals_list, tags=preferences)
-        if len(meals_list_withPref) > maxMeals:
-            maxMeals = len(meals_list_withPref)
-            bestDining = hall
+        if len(meals_list_withPref) >= 3:
+            best_dhall = hall
+            break
 
     # fetch and filter meals for the best hall
-    if bestDining != "hairline":
-        meals_list = asyncio.run(scrapedining.get_meal_info(bestDining, None, curMeal))
+    if best_dhall is not None:
         filtered_meals = scrapedining.filter_meals(meals_list, tags=preferences)
 
         fav_meals = database.get_fav_meals(username)
@@ -126,7 +127,7 @@ def dashboard():
     else:
         return flask.render_template(
             "dashboard.html",
-            hall=bestDining,
+            hall="Null",
             mealtime=curMeal,
             totalMeals="Null",
             grouped_meals="Null",

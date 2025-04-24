@@ -137,6 +137,19 @@ def get_dietary_tags(ingredients, allergens):
             "gelatin",
         ]
         for ing in ing_lower
+    ) and not any(
+        haram in allerg
+        for haram in [
+            "pork",
+            "bacon",
+            "ham",
+            "lard",
+            "alcohol",
+            "beer",
+            "wine",
+            "gelatin",
+        ]
+        for allerg in all_lower
     ):
         tags.append("halal")
 
@@ -178,6 +191,7 @@ async def get_meal_info(halls, date, meal_time, concurrency=20):
         for coro in asyncio.as_completed(detail_tasks):
             job, ing, al, ing_str, all_str = await coro
             tags = get_dietary_tags(ing, al)
+            print(ing, al, tags)
             if (
                 "vegetarian" in (job["section"] or "")
                 and "vegan-vegetarian" not in tags

@@ -28,7 +28,7 @@ packaging==24.2
 platformdirs==4.3.7
 pluggy==1.5.0
 pre_commit==4.2.0
--e git+https://github.com/princeton-eats/princetoneats.git@899af36f49a520e86d2c27ff3cb45e5fdef97603#egg=princetoneats
+-e git+https://github.com/princeton-eats/princetoneats.git@54635f6b02aedb58ef2ca85c101a0e8983434591#egg=princetoneats
 propcache==0.3.1
 psycopg2-binary==2.9.10
 pytest==8.3.5

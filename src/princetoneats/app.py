@@ -72,10 +72,6 @@ def dashboard():
                     pref = "vegan-vegetarian"
                 preferences.append(pref)
 
-    # if auth.is_authenticated():
-    #     user_info = auth.authenticate()
-    #     preferences = database.get_user_prefs(user_info["user"])
-
     halls = [["Roma"], ["Forbes"], ["WB"], ["YN"], ["CJL"], ["Grad"]]
     maxMeals = 0
     curMeal = ""
@@ -113,9 +109,7 @@ def dashboard():
         grouped_meals = defaultdict(list)
         for meal in filtered_meals:
             grouped_meals[meal["dhall"]].append(meal)
-            # dhallFinal = grouped_meals[meal["dhall"]]
 
-        print(grouped_meals)
         dhall = next(iter(grouped_meals))
 
         return flask.render_template(
@@ -127,6 +121,7 @@ def dashboard():
             username=username,
             userFirstname=userFirstname,
         )
+
     else:
         return flask.render_template(
             "dashboard.html",
@@ -178,9 +173,12 @@ def meals_list():
     diningHall = flask.request.args.get("DHfilter", "").split(",")
     mealTimes = flask.request.args.get("MTfilter", "").split(",")
     preferences = flask.request.args.get("ARfilter", "").split(",")
+    print(diningHall)
+    print(mealTimes)
+    print(preferences)
 
     if len(preferences[0]) == 0:
-        preferences = []
+        preferences = [["nothing"]]
 
     meals_list = scrapedining.get_meal_info(diningHall, None, mealTimes[0])
     print(f"Found {len(meals_list)} total meals")
@@ -206,8 +204,14 @@ def meals_list():
     for meal in filtered_meals:
         grouped_meals[meal["dhall"]].append(meal)
 
+    print(preferences)
     return flask.render_template(
-        "meals_list.html", grouped_meals=grouped_meals, username=username
+        "meals_list.html",
+        grouped_meals=grouped_meals,
+        preferences=preferences,
+        mealtimes=mealTimes,
+        dininghalls=diningHall,
+        username=username,
     )
 
 

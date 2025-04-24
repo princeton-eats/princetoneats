@@ -5,42 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meal Results - Princeton Eats</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="static/css/base.css">
-    <link rel="stylesheet" href="static/css/meals_list_c.css">
+    <link rel="stylesheet" href=
+         "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
-    <style>
-        .scroll-container {
-            max-height: 600px;
-            overflow-y: auto;
-            overflow-x: hidden;
-            scrollbar-width: none;
-        }
-        .scroll-container::-webkit-scrollbar {
-            width: 0;
-            background: transparent;
-        }
-        .scroll-container:hover {
-            scrollbar-width: thin;
-        }
-        .scroll-container:hover::-webkit-scrollbar {
-            width: 8px;
-        }
-        .scroll-container:hover::-webkit-scrollbar-thumb {
-            background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 4px;
-        }
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+         <link rel="stylesheet" href="static/css/base.css">
+         <link rel="stylesheet" href="static/css/meals_list_c.css">
+
 </head>
+
 <body class="d-flex flex-column min-vh-100">
 
+    <!--  navbar-expand-lg : expands on large pages, becomes a hambur navbar-light : text works with light backgrounds  -->
     <nav class="navbar navbarCustom navbar-expand-lg navbar-light">
         <a class="navbar-brand" href="/" style="font-size: x-large;"><strong>PrincetonEats!</strong></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-            data-bs-target="#navbarNavAltMarkup" aria-controls="#navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+            <!-- navbar-toggler hamburger nav bar, data-togle : collapase, clicking this button collapses-->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav ms-auto">
                 <a class="nav-item nav-link" href="/">Home</a>
@@ -88,162 +73,43 @@
                                         </button>
                                     </td>
                                     {% endif %}
-                                    <td>{{ meal.name }}</td>
+                                    <td>{{ meal.name}}</td>
+
                                     <td>{{ meal.ingredients_string }}</td>
+
                                     <td>{{ meal.allergens_string }}</td>
                                 </tr>
                                 {% endfor %}
                             </table>
                         {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            <div class="col-md-3 text-center ms-md-4 align-self-end">
-                <h2>REMEMBER!</h2>
-                <div id="warning">
-                    <p>Always follow up with campus dining staff to confirm ingredients!</p>
+                    {% endif %}
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container-fluid back-buttons text-center mb-3">
-        <button onclick="location.href='/find_meals'" class="custom-button me-2">Back</button>
-        <button onclick="location.href='/'" class="custom-button">Home</button>
-    </div>
-
-    <footer class="container-fluid text-center py-2">
-        &copy; COS 333 Final Project<br>
-        Made by Achilles, Adham, Akuei, Ndongo, and Yusuf
-    </footer>
-
-    <script src="static/favorites.js"></script>
-</body>
-</html>
-
-
-
-
-
-<!--
-
-
-
-
-
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meal Results - Princeton Eats</title>
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="static/css/base.css">
-    <link rel="stylesheet" href="static/css/meals_list_c.css">
-
-    <style>
-        .scroll-container {
-            max-height: 600px;
-            overflow-y: auto;
-            overflow-x: hidden;
-            scrollbar-width: none;
-        }
-        .scroll-container::-webkit-scrollbar {
-            width: 0;
-            background: transparent;
-        }
-        .scroll-container:hover {
-            scrollbar-width: thin;
-        }
-        .scroll-container:hover::-webkit-scrollbar {
-            width: 8px;
-        }
-        .scroll-container:hover::-webkit-scrollbar-thumb {
-            background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 4px;
-        }
-    </style>
-</head>
-<body class="d-flex flex-column min-vh-100">
-
-    <nav class="navbar navbarCustom navbar-expand-lg navbar-light">
-        <a class="navbar-brand" href="/" style="font-size: x-large;"><strong>PrincetonEats!</strong></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-            data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav ms-auto">
-                <a class="nav-item nav-link" href="/">Home</a>
-                <a class="nav-item nav-link" href="/find_meals">Find Meals</a>
-                <a class="nav-item nav-link" href="/about">About</a>
-                <a class="nav-item nav-link" href="{% if username %}/logoutcas{% else %}/logincas{% endif %}">Sign {% if username %}out{% else %}in{% endif %}</a>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container-fluid flex-fill d-flex justify-content-center align-items-center">
-        <div class="row w-75 mt-4">
-            <div class="col-md-9 text-center">
-                {% if grouped_meals|length == 0 %}
-                    <p>Sorry! We couldn't find any meals to match your outlined preferences. Please conduct another search.</p>
-                {% else %}
-                    <h2>Here are Your Options</h2>
-                    <div class="scroll-container">
-                        {% for dhall, meals in grouped_meals.items() %}
-                            <h3 class="sticky-top headerCustom">Dining hall: {{ dhall }}</h3>
-                            <table class="table-bordered" style="border-radius: 5px !important;">
-                                <tr>
-                                    {% if username %}<th></th>{% endif %}
-                                    <th>Meal</th>
-                                    <th>Ingredients</th>
-                                    <th>Allergens</th>
-                                </tr>
-                                {% for meal in meals %}
-                                <tr>
-                                    {% if username %}
-                                    <td>
-                                        <button onclick='toggleIsFav({{ meal.name|tojson }})'>
-                                            {% if meal.is_fav %}Remove{% else %}Add{% endif %} Favorite
-                                        </button>
-                                    </td>
-                                    {% endif %}
-                                    <td>{{ meal.name }}</td>
-                                    <td>{{ meal.ingredients_string }}</td>
-                                    <td>{{ meal.allergens_string }}</td>
-                                </tr>
-                                {% endfor %}
-                            </table>
-                        {% endfor %}
-                    </div>
-                {% endif %}
             </div>
             <div class="containerSmall col-md-3 text-center ms-md-4">
                 <h2>REMEMBER!</h2>
                 <div id="warning">
-                    <p>Always follow up with campus dining staff to confirm ingredients!</p>
+                    <p style="text-align: center;">Always follow up with campus dining staff to confirm ingredients!</p>
                 </div>
             </div>
+
         </div>
     </div>
 
-    <div class="container-fluid back-buttons text-center mb-3">
-        <button onclick="location.href='/find_meals'" class="custom-button me-2">Back</button>
+    <div class="container-fluid back-buttons justify-content-center" style="margin-bottom: 1%;">
+        <center>
+        <button onclick="location.href='/find_meals'" class="custom-button">Back</button>
         <button onclick="location.href='/'" class="custom-button">Home</button>
+        </center>
     </div>
 
-    <footer class="container-fluid text-center py-2">
-        &copy; COS 333 Final Project<br>
-        Made by Achilles, Adham, Akuei, Ndongo, and Yusuf
-    </footer>
+    <div class="container-fluid, footer" style="padding: 5px;">
+        <center>
+            &copy; COS 333 Final Project
+            <br>
+            Made by Achilles, Adham, Akuei, Ndongo, and Yusuf
+        </center>
+    </div>
 
     <script src="static/favorites.js"></script>
 </body>
 </html>
-
--->

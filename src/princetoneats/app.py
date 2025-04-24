@@ -149,10 +149,11 @@ def find_meals():
     dairy_free = False
     peanut_free = False
 
+    username = None
     if auth.is_authenticated():
         user_info = auth.authenticate()
-        preferences = database.get_user_prefs(user_info["user"])
-        username = None if user_info is None else user_info["user"]
+        username = user_info["user"]
+        preferences = database.get_user_prefs(username)
         if preferences:
             vegan_vegetarian = preferences.get("veg", False)
             halal = preferences.get("halal", False)

@@ -51,7 +51,7 @@
                 {% else %}
                         <h2>Here are Your Options</h2>
                         <h3 class="lead">
-                            You selected {% for pref in preferences %} <b>{{pref}}</b>, {% endfor %} as your prefereces and
+                            You selected {% for pref in preferences %} <b>{{pref}}</b>, {% endfor %} as your preferences and
                             {% for dhall in grouped_meals.items() %} <b>{{dhall[0]}}</b>, {% endfor %} as your dining halls for <b>{{mealtimes[0]}}</b>.
                         </h3>
                 <div class="containerMeals" style="overflow: scroll !important;">
@@ -59,9 +59,7 @@
                             <h3 class="headerCustom">Dining hall: {{ dhall }}</h3>
                             <table class="table-bordered" style="border-radius: 5px !important;">
                                 <tr>
-                                    {% if username %}
-                                    <th></th>
-                                    {% endif %}
+                                    {% if username %}<th></th>{% endif %}
                                     <th>Meal</th>
                                     <th>Ingredients</th>
                                     <th>Allergens</th>
@@ -70,13 +68,8 @@
                                 <tr>
                                     {% if username %}
                                     <td>
-                                        <button onclick='toggleIsFav({{ meal.name|tojson }})'>
-                                            {% if meal.is_fav %}
-                                                Remove
-                                            {% else %}
-                                                Add
-                                            {% endif %}
-                                            Favorite
+                                        <button class='favorites' onclick='toggleIsFav({{ meal.name|tojson }})'>
+                                            {% if meal.is_fav %}Remove{% else %}Add{% endif %} Favorite
                                         </button>
                                     </td>
                                     {% endif %}

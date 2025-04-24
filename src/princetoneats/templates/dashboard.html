@@ -32,49 +32,23 @@
 
     <div class="container-fluid flex-fill d-flex justify-content-center align-items-center">
         <div class="row w-100 justify-content-center">
-        <center>
-        <h1 class="display-10">Good <span id="ampmSpan"></span> {{userFirstname}}</h1>
-        <h2 class="lead">
-            Here you can change your prefrences, get recommendations, and more.
-        </h2>
-        </center>
 
     <!-- Left Column -->
-        <div class="col-md-5 text-center">
-            <div class="container">
-                <h5>Here are your favorite meals available today.</h2>
-                <table class="table table-bordered rounded-5">
-                    <thead>
-                      <tr>
-                        <th>Available Meal</th>
-                        <th>Dining Hall</th>
-                        <th>Meal Time</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Grilled Chicken Sandwich (Sample)</td>
-                        <td>Whitman-Butler</td>
-                        <td>Lunch</td>
-                      </tr>
-                      <tr>
-                        <td>Pasta Marinara</td>
-                        <td>Rocky-Mathey</td>
-                        <td>Dinner</td>
-                      </tr>
-                    </tbody>
-                  </table>
-            </div>
+        <div class="col-md-5 text-center" style="margin: auto;">
+                <h1 class="display-10">Good <span id="ampmSpan"></span> {{userFirstname}}</h1>
+                <h2 class="lead">
+                    Welcome to your dashboard.
+                </h2>
         </div>
 
         <!-- Right Column -->
-        <div class="col-md-6 text-center">
-            <div class="container" style="overflow: scroll !important; height: 400px;">
+        <div class="col-md-7 text-center">
+            <div class="container" style="overflow: scroll !important; height: 500px;">
                 {% if hall == "hairline" %}
                    <p>Sorry! No meals are available that match your stored preferences for {{mealtime}}.</p>
                 {% else %}
-                    <h5 class="headerCustom">{{hall}} is the best place to grab {{mealtime}} today.</h5>
-                    <p>They have {{totalMeals}} meal{% if totalMeals != 1 %}s{% else %}{% endif %} that aligns with your preferences.</p>
+                    <h5 class="headerCustom">Try {{hall}} for {{mealtime}} today.</h5>
+                    <p>They have {{totalMeals}} meal{% if totalMeals != 1 %}s{% else %}{% endif %} that align with your preferences.</p>
                     <table class="table table-bordered rounded-5">
                         <thead>
                             <tr>

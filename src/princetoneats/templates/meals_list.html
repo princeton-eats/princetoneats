@@ -37,11 +37,11 @@
     </nav>
 
     <div class="container-fluid flex-fill d-flex justify-content-center align-items-center">
-        <div class="row w-75 justify-content-center margin-top: 20px;">
+        <div class="row w-75 justify-content-center" style="margin-top: 20px;">
 
-            <div class="containerMeals col-md-9" style="height: 600px;">
+            <div class="containerMeals col-md-9" style="height: 600px; background-color: #C6D8FF;">
                 {% if grouped_meals|length == 0 %}
-                <div class="containerMeals">
+                <div class="containerMeals" style="background-color: white;">
                         <h1 style="margin: 40px;">Sorry! We couldn't find any meals to match your outlined preferences. Please conduct another search. </h1>
                         <h3 class="lead" style="margin: 45px;">
                             You selected {% for pref in preferences %} <b>{{pref}}</b>, {% endfor %} as your prefereces and
@@ -54,7 +54,7 @@
                             You selected {% for pref in preferences %} <b>{{pref}}</b>, {% endfor %} as your preferences and
                             {% for dhall in grouped_meals.items() %} <b>{{dhall[0]}}</b>, {% endfor %} as your dining halls for <b>{{mealtimes[0]}}</b>.
                         </h3>
-                <div class="containerMeals" style="overflow: scroll !important;">
+                <div class="containerMeals" style="background-color: white; overflow: scroll !important;">
                         {% for dhall, meals in grouped_meals.items() %}
                             <h3 class="headerCustom">Dining hall: {{ dhall }}</h3>
                             <table class="table-bordered" style="border-radius: 5px !important;">
@@ -85,7 +85,7 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="containerSmall col-md-3 text-center ms-md-4">
+            <div class="containerSmall col-md-3 text-center ms-md-4" style="margin:auto; background-color: #C6D8FF;">
                 <h2>REMEMBER!</h2>
                 <div id="warning">
                     <p style="text-align: center;">Always follow up with campus dining staff to confirm ingredients!</p>

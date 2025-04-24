@@ -1,20 +1,31 @@
-nav {
-    background-color: #FFE6D0;
+.navbarCustom {
+    background-color: #CBEFB6;
     color: #2A100C;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 20px !important;;
+    padding-right: 20px !important;;
+}
+
+.headerCustom{
+    background-color: #4F518C;
+    color:white;
+    text-align: center;
+    padding: 15px;
+    border-radius: 5;
 }
 
 /* Main Container for find Meals */
 .container {
-    max-width: 700px;
     margin: 20px auto;
-    background-color: #d0e9ff;
+    background-color: #C6D8FF;
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
+
+table {
+    border-radius: 5px !important;
+}
 
 
 /* Buttons */
@@ -33,11 +44,10 @@ nav {
     font-size: 18px;
     border-radius: 8px;
     cursor: pointer;
-    font-weight: bold;
     width: 180px;
 }
 
 .footer {
-    background-color: #FFE6D0;
+    background-color: #CBEFB6;
     padding: 20px;
 }

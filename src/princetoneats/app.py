@@ -57,12 +57,11 @@ def about():
 def dashboard():
     # check session for user info
     user_info = flask.session.get("user_info")
-    username = None if user_info is None else user_info["user"]
-    userFirstname = (
-        None
-        if user_info is None
-        else user_info["attributes"]["displayname"][0].split(" ")[0]
-    )
+    if user_info is None:
+        return flask.redirect(flask.url_for("home"))
+
+    username = user_info["user"]
+    userFirstname = user_info["attributes"]["displayname"][0].split(" ")[0]
 
     preferences = []
     if auth.is_authenticated():

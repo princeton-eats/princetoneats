@@ -160,6 +160,10 @@ def find_meals():
             dairy_free = preferences.get("dairyfree", False)
             peanut_free = preferences.get("peanutfree", False)
 
+    today = datetime.datetime.now().strftime("%Y-%m-%d")
+    maxdate = datetime.datetime.now() + datetime.timedelta(days=6)
+    formatted_maxdate = maxdate.strftime("%Y-%m-%d")
+
     return flask.render_template(
         "find_meals.html",
         username=username,
@@ -168,6 +172,8 @@ def find_meals():
         gluten_free=gluten_free,
         dairy_free=dairy_free,
         peanut_free=peanut_free,
+        today=today,
+        maxdate=formatted_maxdate,
     )
 
 
@@ -177,14 +183,16 @@ def meals_list():
     diningHall = flask.request.args.get("DHfilter", "").split(",")
     mealTimes = flask.request.args.get("MTfilter", "").split(",")
     preferences = flask.request.args.get("ARfilter", "").split(",")
+    date = flask.request.args.get("date")
     print(diningHall)
     print(mealTimes)
     print(preferences)
+    print(date)
 
     if preferences == [""]:
         preferences = []
 
-    meals_list = asyncio.run(scrapedining.get_meal_info(diningHall, None, mealTimes[0]))
+    meals_list = asyncio.run(scrapedining.get_meal_info(diningHall, date, mealTimes[0]))
     filtered_meals = scrapedining.filter_meals(meals_list, tags=preferences)
 
     username = None

@@ -44,15 +44,36 @@
                 <div class="containerMeals" style="background-color: white;">
                         <h1 style="margin: 40px;">Sorry! We couldn't find any meals to match your outlined preferences. Please conduct another search. </h1>
                         <h3 class="lead" style="margin: 45px;">
-                            You selected {% for pref in preferences %} <b>{{pref}}</b>, {% endfor %} as your prefereces and
-                            {% for dhall in dininghalls %} <b>{{dhall}}</b>, {% endfor %} as your dining halls for <b>{{mealtimes[0]}}</b>.
+                            You selected
+                                {% for pref in preferences %} <b>{{ pref }}</b>{% if not loop.last %},
+                                    {% endif %}
+                                {% endfor %}
+                            as your preference
+                                {% if preferences|length > 1 %}s {% endif %} and
+                                {% for dhall in grouped_meals.items() %}
+                                    <b>{{dhall[0]}}</b>{% if not loop.last %},
+                                    {% endif %}
+                                {% endfor %}
+                            as your dining hall{% if grouped_meals|length > 1 %}s{% endif %}
+                            for <b>{{mealtimes[0]}}</b>.
                         </h3>
                 </div>
                 {% else %}
                         <h2>Here are Your Options</h2>
                         <h3 class="lead">
-                            You selected {% for pref in preferences %} <b>{{pref}}</b>, {% endfor %} as your preferences and
-                            {% for dhall in grouped_meals.items() %} <b>{{dhall[0]}}</b>, {% endfor %} as your dining halls for <b>{{mealtimes[0]}}</b>.
+                            You selected
+                                {% for pref in preferences %}
+                                    <b>{{ pref }}</b>{% if not loop.last %},
+                                    {% endif %}
+                                {% endfor %}
+                            as your preference
+                                {% if preferences|length > 1 %}s {% endif %} and
+                                {% for dhall in grouped_meals.items() %}
+                                    <b>{{dhall[0]}}</b>{% if not loop.last %},
+                                    {% endif %}
+                                {% endfor %}
+                            as your dining hall{% if grouped_meals|length > 1 %}s{% endif %}
+                            for <b>{{mealtimes[0]}}</b>.
                         </h3>
                 <div class="containerMeals" style="background-color: white; overflow: scroll !important;">
                         {% for dhall, meals in grouped_meals.items() %}

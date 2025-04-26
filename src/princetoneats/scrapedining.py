@@ -208,7 +208,7 @@ async def get_meal_info(halls, date, meal_time, concurrency=20):
                     "allergens_string": all_str,
                 }
             )
-        return meals
+        return sorted(meals, key=lambda meal: meal["name"])
 
 
 def filter_meals(meals, tags):

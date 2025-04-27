@@ -31,31 +31,24 @@
         </div>
     </nav>
 
-    <div class="container-fluid flex-fill d-flex justify-content-center align-items-center">
+    <div class="container-fluid flex-fill d-flex align-items-center">
         <div class="row w-100 justify-content-center">
 
-    <!-- Left Column (Header/Text) -->
-        <div class="col-md-6 text-center">
-            <h1 class="display-4">Welcome to PrincetonEats</h1>
-            <h2 class="lead">Discover meals around campus with ease. No stress,
-                no scrolling, just fast, personalized meal recommendations.
-            </h2>
+            <div class="col-md-6 text-center">
+                <h1 class="display-4">Welcome to PrincetonEats</h1>
+                <h2 class="lead">Discover meals around campus with ease. No stress,
+                    no scrolling, just fast, personalized meal recommendations.
+                </h2>
 
-            <div class="buttons">
-                <button onclick="location.href='/find_meals'" class="custom-button">FIND MEALS</button>
+                <div class="buttons">
+                    <button onclick="location.href='/find_meals'" class="custom-button">FIND MEALS</button>
 
-                <button onclick="location.href='{% if username %}/logoutcas{% else %}/logincas{% endif %}'"
-                    class="custom-button">
-                    SIGN {% if username %}OUT{% else %}IN{% endif %}
-                </button>
+                    <button onclick="location.href='{% if username %}/logoutcas{% else %}/logincas{% endif %}'"
+                        class="custom-button">
+                        SIGN {% if username %}OUT{% else %}IN{% endif %}
+                    </button>
+                </div>
             </div>
-        </div>
-
-        <!-- Right Column (Image) -->
-        <div class="col-md-6 text-center">
-            <p>Logo coming soon!!!</p>
-        </div>
-
         </div>
     </div>
 

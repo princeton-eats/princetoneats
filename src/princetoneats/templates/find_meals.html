@@ -32,18 +32,17 @@
         </div>
     </nav>
 
-    <div class="container-fluid flex-fill d-flex justify-content-center align-items-center">
-        <div class="row w-80 justify-content-center">
+    <div class="container flex-fill d-flex justify-content-center align-items-center mb-3 mb-md-0 mt-3">
+        <div class="row w-100 justify-content-center" style="max-width: 1000px">
             <center>
 
-            <div class="container">
+            <div class="containerCus">
             <h1>Select Your Preferences</h2>
             <hr class="line">
 
             <form id="allergensForm">
                 <div class="checkbox-group">
                     <h4>Select Restrictions</h4>
-                    <!-- {% if prev_restrictions_stored %}<p>Restrictions loaded from last query.</p>{% else %}{% endif %} -->
                     <label><input type="checkbox" class="form-check-input" for="customCheck1" name="ARfilter" value="vegan-vegetarian" {% if vegan_vegetarian %}checked{% endif %}> Vegan and Vegetarian </label>
                     <label><input type="checkbox" class="form-check-input" for="customCheck1" name="ARfilter" value="halal" {% if halal %}checked{% endif %}> Halal</label>
                     <label><input type="checkbox" class="form-check-input" for="customCheck1" name="ARfilter" value="gluten-free" {% if gluten_free %}checked{% endif %}> Gluten Free</label>

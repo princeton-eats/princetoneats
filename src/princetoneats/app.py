@@ -64,23 +64,22 @@ def dashboard():
     userFirstname = user_info["attributes"]["displayname"][0].split(" ")[0]
 
     preferences = []
-    if auth.is_authenticated():
-        user_info = auth.authenticate()
+    user_info = auth.authenticate()
+    preferences_dict = database.get_user_prefs(user_info["user"])
+    preferences = []
+    if preferences_dict is None:
+        database.set_user_prefs(username, False, False, False, False, False)
         preferences_dict = database.get_user_prefs(user_info["user"])
-        preferences = []
-        if preferences_dict is None:
-            database.set_user_prefs(username, False, False, False, False, False)
-            preferences_dict = database.get_user_prefs(user_info["user"])
-        for pref in ["halal", "veg", "glutenfree", "dairyfree", "peanutfree"]:
-            if preferences_dict.get(pref):
-                tag = (
-                    "vegan-vegetarian"
-                    if pref == "veg"
-                    else pref.replace("glutenfree", "gluten-free")
-                    .replace("dairyfree", "dairy-free")
-                    .replace("peanutfree", "peanut-free")
-                )
-                preferences.append(tag)
+    for pref in ["halal", "veg", "glutenfree", "dairyfree", "peanutfree"]:
+        if preferences_dict.get(pref):
+            tag = (
+                "vegan-vegetarian"
+                if pref == "veg"
+                else pref.replace("glutenfree", "gluten-free")
+                .replace("dairyfree", "dairy-free")
+                .replace("peanutfree", "peanut-free")
+            )
+            preferences.append(tag)
 
     # determine current meal
     curhour = datetime.datetime.now().hour
@@ -123,17 +122,6 @@ def dashboard():
             mealtime=curMeal,
             totalMeals=len(filtered_meals),
             grouped_meals=grouped_meals,
-            username=username,
-            userFirstname=userFirstname,
-        )
-
-    else:
-        return flask.render_template(
-            "dashboard.html",
-            hall="Null",
-            mealtime=curMeal,
-            totalMeals="Null",
-            grouped_meals="Null",
             username=username,
             userFirstname=userFirstname,
         )

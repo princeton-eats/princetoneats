@@ -48,7 +48,15 @@ def map_args(hall, date):
 
     if date is None:
         date = get_current_date()
-    date_url = "%2F".join(date.split("/"))  # MM%2FDD%2FYY
+        date_url = "%2F".join(date.split("/"))
+    elif "-" in date:
+        # YYYY-MM-DD
+        year, month, day = date.split("-")
+        date_url = "%2F".join([month, day, year])
+    elif "/" in date:
+        # MM/DD/YYYY
+        month, day, year = date.split("-")
+        date_url = "%2F".join([month, day, year])
 
     return hall_url, date_url, location_num, dhall_name
 

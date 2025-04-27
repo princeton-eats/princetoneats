@@ -21,6 +21,7 @@
     <nav class="navbar navbarCustom navbar-expand-lg navbar-light">
         <a class="navbar-brand" href="/" style="font-size: x-large;"><strong>PrincetonEats!</strong></a>
             <!-- navbar-toggler hamburger nav bar, data-togle : collapase, clicking this button collapses-->
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
             data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -36,10 +37,11 @@
         </div>
     </nav>
 
-    <div class="container-fluid flex-fill d-flex justify-content-center align-items-center">
-        <div class="row w-75 justify-content-center" style="margin-top: 20px;">
+    <div class="container flex-fill d-flex justify-content-center align-items-center">
+        <div class="row w-100 justify-content-center">
 
-            <div class="containerMeals col-md-9" style="height: 600px; background-color: #C6D8FF;">
+            <div class="containerMeals col-md-8 mb-3 mb-md-0 mt-3" style="height: 600px; background-color: #C6D8FF;">
+                <!-- Error Handling when no preferences align with the meals -->
                 {% if grouped_meals|length == 0 %}
                 <div class="containerMeals" style="background-color: white;">
                         <h1 style="margin: 40px;">Sorry! We couldn't find any meals to match your outlined preferences. Please conduct another search. </h1>
@@ -59,6 +61,8 @@
                         </h3>
                 </div>
                 {% else %}
+                <!-- Main Div on successful return -->
+                <div>
                         <h2>Here are Your Options</h2>
                         <h3 class="lead">
                             You selected
@@ -75,52 +79,56 @@
                             as your dining hall{% if grouped_meals|length > 1 %}s{% endif %}
                             for <b>{{mealtimes[0]}}</b>.
                         </h3>
-                <div class="containerMeals" style="background-color: white; overflow: scroll !important;">
-                        {% for dhall, meals in grouped_meals.items() %}
-                            <h3 class="headerCustom">Dining hall: {{ dhall }}</h3>
-                            <table class="table-bordered" style="border-radius: 5px !important;">
-                                <tr>
-                                    {% if username %}<th></th>{% endif %}
-                                    <th>Meal</th>
-                                    <th>Ingredients</th>
-                                    <th>Allergens</th>
-                                </tr>
-                                {% for meal in meals %}
-                                <tr>
-                                    {% if username %}
-                                    <td>
-                                        {% if meal.is_fav %}
-                                        <span onclick='toggleIsFav({{ meal.name|tojson }})'>
-                                            <span class='isfavorite'>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
-                                                    <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
-                                                </svg>
-                                            </span>
-                                        </span>
-                                        {% else %}
+
+
+                    <div class="containerMeals" style="background-color: white; overflow-y: scroll !important;">
+                            {% for dhall, meals in grouped_meals.items() %}
+                                <h3 class="headerCustom" >Dining hall: {{ dhall }}</h3>
+                                <table class="table-responsive table table-sm">
+                                    <tr>
+                                        {% if username %}<th></th>{% endif %}
+                                        <th>Meal</th>
+                                        <th>Ingredients</th>
+                                        <th>Allergens</th>
+                                    </tr>
+                                    {% for meal in meals %}
+                                    <tr>
+                                        {% if username %}
+                                        <td>
+                                            {% if meal.is_fav %}
                                             <span onclick='toggleIsFav({{ meal.name|tojson }})'>
-                                                <span class='notfavorite'>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
-                                                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                                                <span class='isfavorite'>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
                                                     </svg>
                                                 </span>
                                             </span>
+                                            {% else %}
+                                                <span onclick='toggleIsFav({{ meal.name|tojson }})'>
+                                                    <span class='notfavorite'>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                                                            <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                                                        </svg>
+                                                    </span>
+                                                </span>
+                                            {% endif %}
+                                        </td>
                                         {% endif %}
-                                    </td>
-                                    {% endif %}
-                                    <td>{{ meal.name}}</td>
+                                        <td>{{ meal.name}}</td>
 
-                                    <td>{{ meal.ingredients_string }}</td>
+                                        <td>{{ meal.ingredients_string }}</td>
 
-                                    <td>{{ meal.allergens_string }}</td>
-                                </tr>
-                                {% endfor %}
-                            </table>
-                        {% endfor %}
-                    {% endif %}
+                                        <td>{{ meal.allergens_string }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
                 </div>
             </div>
-            <div class="containerSmall col-md-3 text-center ms-md-4" style="margin:auto; background-color: #C6D8FF;">
+
+            <div class="containerSmall col-md-4 text-center" style="margin:auto; background-color: #C6D8FF;">
                 <h2>REMEMBER!</h2>
                 <div id="warning">
                     <p style="text-align: center;">Always follow up with campus dining staff to confirm ingredients!</p>
@@ -130,9 +138,9 @@
         </div>
     </div>
 
-    <div class="container-fluid back-buttons justify-content-center" style="margin-bottom: 1%;">
+    <div class="container-fluid back-buttons justify-content-center mb-3 mb-md-0 mt-3 mt-md-0" style="padding: 10px">
         <center>
-        <button onclick="location.href='/find_meals'" class="custom-button">Back</button>
+        <button onclick="location.href='/find_meals'" class="custom-button mb-3 mb-md-0">Back</button>
         <button onclick="location.href='/'" class="custom-button">Home</button>
         </center>
     </div>

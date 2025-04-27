@@ -64,10 +64,10 @@ def dashboard():
     userFirstname = user_info["attributes"]["displayname"][0].split(" ")[0]
 
     preferences = []
+
     if auth.is_authenticated():
         user_info = auth.authenticate()
         preferences_dict = database.get_user_prefs(user_info["user"])
-        preferences = []
         if preferences_dict is None:
             database.set_user_prefs(username, False, False, False, False, False)
             preferences_dict = database.get_user_prefs(user_info["user"])
@@ -90,6 +90,8 @@ def dashboard():
         curMeal = "Lunch"
     else:
         curMeal = "Dinner"
+
+    curMeal = "Dinner"
 
     halls = [["Roma"], ["Forbes"], ["WB"], ["YN"], ["CJL"], ["Grad"]]
     random.shuffle(halls)
@@ -117,6 +119,7 @@ def dashboard():
             grouped_meals[meal["dhall"]].append(meal)
 
         dhall = next(iter(grouped_meals))
+
         return flask.render_template(
             "dashboard.html",
             hall=dhall,

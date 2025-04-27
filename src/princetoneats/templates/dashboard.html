@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Princeton Eats</title>
     <link rel="stylesheet" href="static/css/base.css">
+    <link rel="stylesheet" href="static/css/meals_list_c.css">
     <link rel="stylesheet" href=
         "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -30,7 +30,7 @@
         </div>
     </nav>
 
-    <div class="container-fluid flex-fill d-flex justify-content-center align-items-center">
+    <div class="container flex-fill d-flex justify-content-center align-items-center">
         <div class="row w-100 justify-content-center">
 
         <div class="col-md-5 text-center" style="margin: auto;">
@@ -40,54 +40,62 @@
                 </h2>
         </div>
 
-        <div class="col-md-7 text-center">
-            <div class="container" style="overflow: scroll !important; height: 500px;">
-                {% if hall == "hairline" %}
-                   <p>Sorry! No meals are available that match your stored preferences for {{mealtime}}.</p>
+        <div class="containerMeals col-md-7 mb-3 mb-md-0 mt-3" style="height: 500px; background-color: #C6D8FF;">
+                <!-- Error Handling when no preferences align with the meals -->
+                {% if hall == "Null" %}
+                <div class="containerMeals" style="background-color: white; overflow: scroll !important;">
+                    <h1>Sorry! We couldn't generate a dining hall that aligns with your current preferences. <br><br>
+                        Try and refresh the page or change your preferences! </h1>
+                </div>
                 {% else %}
+
+                <div>
                     <h5 class="headerCustom">Try {{hall}} for {{mealtime}} today.</h5>
                     <p>They have {{totalMeals}} meal{% if totalMeals != 1 %}s{% else %}{% endif %} that align with your preferences.</p>
-                    <table class="table table-bordered rounded-5">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Meal</th>
-                                <th>Ingredients</th>
-                                <th>Allergens</th>
-                            </tr>
-                        </thead>
-                        {% for dhall, meals in grouped_meals.items() %}
-                            {% for meal in meals %}
-                            <tr>
-                                <td>
-                                    {% if meal.is_fav %}
-                                        <span onclick='toggleIsFav({{ meal.name|tojson }})'>
-                                            <span class='isfavorite'>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
-                                                    <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
-                                                </svg>
-                                            </span>
-                                        </span>
-                                    {% else %}
-                                        <span onclick='toggleIsFav({{ meal.name|tojson }})'>
-                                            <span class='notfavorite'>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
-                                                    <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
-                                                </svg>
-                                            </span>
-                                        </span>
-                                    {% endif %}
-                                </td>
-                                <td>{{ meal.name}}</td>
 
-                                <td>{{ meal.ingredients_string }}</td>
+                <div class="containerMeals" style="background-color: white; height: 350px; overflow: scroll !important;">
+                            <table class="table-responsive table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Meal</th>
+                                        <th>Ingredients</th>
+                                        <th>Allergens</th>
+                                    </tr>
+                                </thead>
+                                {% for dhall, meals in grouped_meals.items() %}
+                                    {% for meal in meals %}
+                                    <tr>
+                                        <td>
+                                            {% if meal.is_fav %}
+                                                <span onclick='toggleIsFav({{ meal.name|tojson }})'>
+                                                    <span class='isfavorite'>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+                                                            <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+                                                        </svg>
+                                                    </span>
+                                                </span>
+                                            {% else %}
+                                                <span onclick='toggleIsFav({{ meal.name|tojson }})'>
+                                                    <span class='notfavorite'>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                                                            <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                                                        </svg>
+                                                    </span>
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ meal.name}}</td>
 
-                                <td>{{ meal.allergens_string }}</td>
-                        </tr>
+                                        <td>{{ meal.ingredients_string }}</td>
+
+                                        <td>{{ meal.allergens_string }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
                         {% endfor %}
-                    </table>
-                {% endfor %}
-                {% endif %}
+                    {% endif %}
+                </div>
             </div>
         </div>
 
@@ -95,7 +103,7 @@
     </div>
 
     <div class="buttons" style="margin-bottom: 40px;">
-        <button onclick="location.href='/find_meals'" class="custom-button" style="font-size: 28px; width: 260px;">FIND MEALS</button>
+        <button onclick="location.href='/find_meals'" class="custom-button" style="font-size: 24px; width: 260px;">FIND MEALS</button>
     </div>
 
     <div class="container-fluid, footer" style="padding: 5px;">

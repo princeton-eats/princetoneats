@@ -70,6 +70,13 @@
             <form id="mealTimeForm">
                 <div class="checkbox-group">
                     <h5>Select Meal Time</h4>
+                    <label for="dateSelector">Select a date:</label>
+                    <input type="date"
+                        name="dateSelector"
+                        min="{{today}}"
+                        max="{{maxdate}}"
+                        value="{{today}}"
+                        required>
                     <label><input type="radio" name="MTfilter" value="Breakfast"> Breakfast</label>
                     <label><input type="radio" name="MTfilter" value="Lunch"> Lunch</label>
                     <label><input type="radio" name="MTfilter" value="Dinner"> Dinner</label>
@@ -106,7 +113,6 @@
             let formMTF = document.getElementById("mealTimeForm");
             let formAF = document.getElementById("allergensForm");
 
-
             let formDataDHF = new FormData(formDHF);
             let formDataMTF = new FormData(formMTF);
             let formDataAF = new FormData(formAF);
@@ -118,6 +124,8 @@
             formDataDHF.getAll("DHfilter").forEach(value => DH.push(value));
             formDataMTF.getAll("MTfilter").forEach(value => MT.push(value));
             formDataAF.getAll("ARfilter").forEach(value => AR.push(value));
+
+            let date = formDataMTF.get("dateSelector");
 
             let errorMessage = "";
 
@@ -137,7 +145,7 @@
                errorBox.style.color = 'red';
             }
             else {
-                let queryString = `?DHfilter=${DH.join(",")}&MTfilter=${MT.join(",")}&ARfilter=${AR.join(",")}`;
+                let queryString = `?DHfilter=${DH.join(",")}&MTfilter=${MT.join(",")}&ARfilter=${AR.join(",")}&date=${date}`;
                 window.location.href = "/meals_list" + queryString;
             }
         });

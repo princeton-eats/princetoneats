@@ -43,22 +43,41 @@
             <div class="containerMeals col-md-8 mb-3 mb-md-0 mt-3" style="height: 600px; background-color: #C6D8FF;">
                 <!-- Error Handling when no preferences align with the meals -->
                 {% if grouped_meals|length == 0 %}
-                <div class="containerMeals" style="background-color: white; overflow: scroll !important;">
-                    <h1>Sorry! We couldn't find any meals to match your outlined preferences. Please conduct another search. </h1>
-                    <h3 class="lead">
-                        You selected {% for pref in preferences %} <b>{{pref}}</b>, {% endfor %} as your prefereces and
-                        {% for dhall in dininghalls %} <b>{{dhall}}</b>, {% endfor %} as your dining halls for <b>{{mealtimes[0]}}</b>.
-                    </h3>
+                <div class="containerMeals" style="background-color: white;">
+                        <h1 style="margin: 40px;">Sorry! We couldn't find any meals to match your outlined preferences. Please conduct another search. </h1>
+                        <h3 class="lead" style="margin: 45px;">
+                            You selected
+                                {% for pref in preferences %} <b>{{ pref }}</b>{% if not loop.last %},
+                                    {% endif %}
+                                {% endfor %}
+                            as your preference
+                                {% if preferences|length > 1 %}s {% endif %} and
+                                {% for dhall in grouped_meals.items() %}
+                                    <b>{{dhall[0]}}</b>{% if not loop.last %},
+                                    {% endif %}
+                                {% endfor %}
+                            as your dining hall{% if grouped_meals|length > 1 %}s{% endif %}
+                            for <b>{{mealtimes[0]}}</b>.
+                        </h3>
                 </div>
                 {% else %}
                 <!-- Main Div on successful return -->
                 <div>
                         <h2>Here are Your Options</h2>
                         <h3 class="lead">
-                            <div style="height:60px; overflow-y: scroll !important;">
-                            You selected {% if preferences|length == 0 %} nothing {%else%} {% for pref in preferences %} <b>{{pref}}</b>, {% endfor %} {%endif%} as your preferences and
-                            {% for dhall in grouped_meals.items() %} <b>{{dhall[0]}}</b>, {% endfor %} as your dining halls for <b>{{mealtimes[0]}}</b>.
-                            </div>
+                            You selected
+                                {% for pref in preferences %}
+                                    <b>{{ pref }}</b>{% if not loop.last %},
+                                    {% endif %}
+                                {% endfor %}
+                            as your preference
+                                {% if preferences|length > 1 %}s {% endif %} and
+                                {% for dhall in grouped_meals.items() %}
+                                    <b>{{dhall[0]}}</b>{% if not loop.last %},
+                                    {% endif %}
+                                {% endfor %}
+                            as your dining hall{% if grouped_meals|length > 1 %}s{% endif %}
+                            for <b>{{mealtimes[0]}}</b>.
                         </h3>
 
 

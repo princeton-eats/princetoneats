@@ -10,23 +10,18 @@
     color:white;
     text-align: center;
     padding: 15px;
-    border-radius: 5;
+    border-radius: 10px;
+    margin-top: 5px;
 }
 
 /* Main Container for find Meals */
-.container {
-    margin: 20px auto;
+.containerCus {
+    margin: auto;
     background-color: #C6D8FF;
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
-
-
-table {
-    border-radius: 5px !important;
-}
-
 
 /* Buttons */
 .buttons {

@@ -1,0 +1,39 @@
+/* main container style */
+.containerMeals {
+   max-width: 900px;
+   margin:auto;
+   padding: 15px;
+   height: 450px;
+   border-radius: 10px;
+   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+   text-align: center;
+}
+/* main container style */
+.containerSmall {
+   margin: auto;
+   max-width: 250px;
+   max-height: 300px;
+   padding: 30px;
+   border-radius: 10px;
+   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+#warning {
+   margin-top: 20px;
+   font-size: 18px;
+   font-weight: bold;
+   background: white;
+   padding: 15px;
+   border-radius: 8px;
+   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* dropdown */
+.dropdown {
+   position: relative;
+   display: inline-block;
+   text-decoration-line: underline;
+   margin-right: 15px;
+   margin-bottom: 10px;
+   cursor: pointer;
+}

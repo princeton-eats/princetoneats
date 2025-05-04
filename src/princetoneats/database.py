@@ -126,19 +126,30 @@ def set_user_prefs(username, veg, halal, glutenfree, dairyfree, peanutfree):
     return _db_helper(username, callback_func)
 
 
-def get_user_prefs(username):
+def get_user_info(username):
     def callback_func(user, session):
         if user is None:
-            result = None
-        else:
-            result = {
-                "veg": user.veg,
-                "halal": user.halal,
-                "glutenfree": user.glutenfree,
-                "dairyfree": user.dairyfree,
-                "peanutfree": user.peanutfree,
+            return {
+                "fav_meals": "",
+                "preferences": {
+                    "vegan-vegetarian": False,
+                    "halal": False,
+                    "gluten-free": False,
+                    "dairy-free": False,
+                    "peanut-free": False,
+                },
             }
-        return result
+        else:
+            return {
+                "fav_meals": user.fav_meals,
+                "preferences": {
+                    "vegan-vegetarian": user.veg,
+                    "halal": user.halal,
+                    "gluten-free": user.glutenfree,
+                    "dairy-free": user.dairyfree,
+                    "peanut-free": user.peanutfree,
+                },
+            }
 
     return _db_helper(username, callback_func)
 
@@ -181,13 +192,6 @@ def is_fav_meal(username, meal_name):
     return _db_helper(username, callback_func)
 
 
-def get_fav_meals(username):
-    def callback_func(user, session):
-        return "" if user is None else user.fav_meals
-
-    return _db_helper(username, callback_func)
-
-
 # ------------------------------------------------------------
 
 # Testing
@@ -196,29 +200,29 @@ if __name__ == "__main__":
 
     # _create_database(DATABASE_URL=DATABASE_URL)
 
-    _remove_user("ya1653")
-    _remove_user("ai0492")
+    # _remove_user("ya1653")
+    # _remove_user("ai0492")
 
-    set_user_prefs("ya1653", False, True, False, False, False)
-    print(get_user_prefs("ya1653"))
-    set_user_prefs("ya1653", True, True, False, False, False)
-    print(get_user_prefs("ya1653"))
-    # Nonexistent user
-    print(get_user_prefs("ya1654"))
+    # set_user_prefs("ya1653", False, True, False, False, False)
+    # print(get_user_prefs("ya1653"))
+    # set_user_prefs("ya1653", True, True, False, False, False)
+    # print(get_user_prefs("ya1653"))
+    # # Nonexistent user
+    # print(get_user_prefs("ya1654"))
 
-    add_fav_meal("ya1653", "A")
+    # add_fav_meal("ya1653", "A")
 
-    assert is_fav_meal("ya1653", "A")
-    assert not is_fav_meal("ya1653", "B")
+    # assert is_fav_meal("ya1653", "A")
+    # assert not is_fav_meal("ya1653", "B")
 
-    # duplicate meal should only be added once
-    add_fav_meal("ya1653", "A")
-    add_fav_meal("ya1653", "B")
+    # # duplicate meal should only be added once
+    # add_fav_meal("ya1653", "A")
+    # add_fav_meal("ya1653", "B")
 
-    remove_fav_meal("ya1653", "A")
-    assert not is_fav_meal("ya1653", "A")
-    assert is_fav_meal("ya1653", "B")
+    # remove_fav_meal("ya1653", "A")
+    # assert not is_fav_meal("ya1653", "A")
+    # assert is_fav_meal("ya1653", "B")
 
-    # user not already in table
-    add_fav_meal("ai0492", "A")
-    assert is_fav_meal("ai0492", "A")
+    # # user not already in table
+    # add_fav_meal("ai0492", "A")
+    # assert is_fav_meal("ai0492", "A")

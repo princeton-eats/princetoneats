@@ -132,13 +132,13 @@ def find_meals():
     if auth.is_authenticated():
         user_info = auth.authenticate()
         username = user_info["user"]
-        preferences = database.get_user_prefs(username)
-        if preferences:
-            vegan_vegetarian = preferences.get("veg", False)
-            halal = preferences.get("halal", False)
-            gluten_free = preferences.get("glutenfree", False)
-            dairy_free = preferences.get("dairyfree", False)
-            peanut_free = preferences.get("peanutfree", False)
+        preferences = database.get_user_info(username)["preferences"]
+
+        vegan_vegetarian = preferences.get("vegan-vegetarian", False)
+        halal = preferences.get("halal", False)
+        gluten_free = preferences.get("gluten-free", False)
+        dairy_free = preferences.get("dairy-free", False)
+        peanut_free = preferences.get("peanut-free", False)
 
     today = datetime.datetime.now().strftime("%Y-%m-%d")
     maxdate = datetime.datetime.now() + datetime.timedelta(days=6)
@@ -164,10 +164,6 @@ def meals_list():
     mealTimes = flask.request.args.get("MTfilter", "").split(",")
     preferences = flask.request.args.get("ARfilter", "").split(",")
     date = flask.request.args.get("date")
-    print(diningHall)
-    print(mealTimes)
-    print(preferences)
-    print(date)
 
     if preferences == [""]:
         preferences = []
@@ -183,9 +179,12 @@ def meals_list():
         glutenfree = "gluten-free" in preferences
         dairyfree = "dairy-free" in preferences
         peanutfree = "peanut-free" in preferences
-        database.set_user_prefs(username, veg, halal, glutenfree, dairyfree, peanutfree)
 
-        fav_meals = database.get_fav_meals(username)
+        result = database.set_user_prefs(
+            username, veg, halal, glutenfree, dairyfree, peanutfree
+        )
+
+        fav_meals = result["fav_meals"]
         for meal in meals_list:
             meal["is_fav"] = meal["name"] in fav_meals
 
@@ -193,7 +192,6 @@ def meals_list():
     for meal in filtered_meals:
         grouped_meals[meal["dhall"]].append(meal)
 
-    print(preferences)
     return flask.render_template(
         "meals_list.html",
         grouped_meals=grouped_meals,

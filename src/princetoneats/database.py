@@ -123,6 +123,17 @@ def set_user_prefs(username, veg, halal, glutenfree, dairyfree, peanutfree):
             user.dairyfree = dairyfree
             user.peanutfree = peanutfree
 
+        return {
+            "fav_meals": user.fav_meals,
+            "preferences": {
+                "vegan-vegetarian": user.veg,
+                "halal": user.halal,
+                "gluten-free": user.glutenfree,
+                "dairy-free": user.dairyfree,
+                "peanut-free": user.peanutfree,
+            },
+        }
+
     return _db_helper(username, callback_func)
 
 

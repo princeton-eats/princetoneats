@@ -185,6 +185,7 @@ def meals_list():
         )
 
         fav_meals = result["fav_meals"]
+        print(fav_meals)
         for meal in meals_list:
             meal["is_fav"] = meal["name"] in fav_meals
 
@@ -211,9 +212,11 @@ def updatefav():
         return
 
     username = flask.session.get("user_info")["user"]
-    meal_name = flask.request.args.get("name")
 
-    if database.is_fav_meal(username, meal_name):
+    meal_name = flask.request.args.get("name")
+    current_fav = flask.request.args.get("fav")
+
+    if current_fav == "true":
         database.remove_fav_meal(username, meal_name)
     else:
         database.add_fav_meal(username, meal_name)

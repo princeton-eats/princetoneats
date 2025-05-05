@@ -2,7 +2,7 @@ let request = null;
 
 function toggleIsFav(name, isCurrentFavorite) {
    console.log('toggling in database for:', name);
-   const url = '/updatefav?name=' + name + '&fav=' + isCurrentFavorite;
+   const url = '/updatefav?name=' + encodeURIComponent(name) + '&fav=' + isCurrentFavorite;
 
    // Create a new request without aborting previous ones
    const xhr = new XMLHttpRequest();

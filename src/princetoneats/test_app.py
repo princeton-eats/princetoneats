@@ -100,7 +100,12 @@ def test_find_meals_authenticated(mock_get_user_info, authenticated_client):
 
     response = authenticated_client.get("/find_meals")
     assert response.status_code == 200
-    assert '"vegan-vegetarian" checked' in response.text
+    # check that only the true values are set to checked in the form
+    assert '"vegan-vegetarian" checked>' in response.text
+    assert '"halal" >' in response.text
+    assert '"gluten-free" checked>' in response.text
+    assert '"dairy-free" >' in response.text
+    assert '"peanut-free" checked>' in response.text
 
 
 @patch("princetoneats.auth.is_authenticated")
@@ -135,9 +140,9 @@ def test_meals_list(
         "/meals_list?DHfilter=Roma&MTfilter=Lunch&ARfilter=vegan-vegetarian&date=2023-05-01"
     )
     assert response.status_code == 200
-
-
-#  assert b'meals_list.html' in response.data
+    # filter must capture the roma meal and not the forbes meal
+    assert "Roma" in response.text
+    assert "Forbes" not in response.text
 
 
 @patch("princetoneats.auth.is_authenticated")
@@ -170,4 +175,5 @@ def test_updatefav_unauthenticated(mock_is_authenticated, client):
     mock_is_authenticated.return_value = False
 
     response = client.get("/updatefav?name=Test%20Meal&fav=false")
+    # Response should report server error
     assert response.status_code == 500

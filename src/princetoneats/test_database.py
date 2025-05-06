@@ -82,10 +82,12 @@ def test_get_user_info_existing_user(db_session):
     # Add user with preferences
     database.add_user("infouser", db_session)
     database.set_user_prefs("infouser", True, False, True, False, True)
+    database.add_fav_meal("infouser", "Chicken")
+    database.add_fav_meal("infouser", "Cheese")
 
     # Test getting info
     result = database.get_user_info("infouser")
-    print(result)
+    assert result["fav_meals"] == ",Chicken,Cheese"
     assert result["preferences"]["vegan-vegetarian"] is True
     assert result["preferences"]["halal"] is False
     assert result["preferences"]["gluten-free"] is True

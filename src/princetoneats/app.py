@@ -56,61 +56,47 @@ def about():
 @app.route("/dashboard")
 def dashboard():
     # check session for user info
-    user_info = flask.session.get("user_info")
-    if user_info is None:
+    if not auth.is_authenticated():
         return flask.redirect(flask.url_for("home"))
 
+    user_info = auth.authenticate()
     username = user_info["user"]
+
+    db_info = database.get_user_info(username)
+    preferences = list(
+        key for key in db_info["preferences"] if db_info["preferences"][key]
+    )
     userFirstname = user_info["attributes"]["displayname"][0].split(" ")[0]
-
-    preferences = []
-
-    if auth.is_authenticated():
-        user_info = auth.authenticate()
-        preferences_dict = database.get_user_prefs(user_info["user"])
-        if preferences_dict is None:
-            database.set_user_prefs(username, False, False, False, False, False)
-            preferences_dict = database.get_user_prefs(user_info["user"])
-        for pref in ["halal", "veg", "glutenfree", "dairyfree", "peanutfree"]:
-            if preferences_dict.get(pref):
-                tag = (
-                    "vegan-vegetarian"
-                    if pref == "veg"
-                    else pref.replace("glutenfree", "gluten-free")
-                    .replace("dairyfree", "dairy-free")
-                    .replace("peanutfree", "peanut-free")
-                )
-                preferences.append(tag)
 
     # determine current meal
     curhour = datetime.datetime.now().hour
-    if curhour < 9:
-        curMeal = "Breakfast"
-    elif curhour < 14:
+    if curhour < 14:
         curMeal = "Lunch"
     else:
         curMeal = "Dinner"
 
-    curMeal = "Dinner"
-
+    # find dining hall with most preferred meals
     halls = [["Roma"], ["Forbes"], ["WB"], ["YN"], ["CJL"], ["Grad"]]
     random.shuffle(halls)
 
     best_dhall = None
-
-    # find dining hall with most preferred meals
     for hall in halls:
         meals_list = asyncio.run(scrapedining.get_meal_info(hall, None, curMeal))
         meals_list_withPref = scrapedining.filter_meals(meals_list, tags=preferences)
+        print(hall, len(meals_list_withPref))
         if len(meals_list_withPref) >= 3:
             best_dhall = hall
             break
 
     # fetch and filter meals for the best hall
+    filtered_meals = None
+    grouped_meals = None
+    dhall = None
+
     if best_dhall is not None:
         filtered_meals = scrapedining.filter_meals(meals_list, tags=preferences)
 
-        fav_meals = database.get_fav_meals(username)
+        fav_meals = db_info["fav_meals"]
         for meal in meals_list:
             meal["is_fav"] = meal["name"] in fav_meals
 
@@ -120,26 +106,15 @@ def dashboard():
 
         dhall = next(iter(grouped_meals))
 
-        return flask.render_template(
-            "dashboard.html",
-            hall=dhall,
-            mealtime=curMeal,
-            totalMeals=len(filtered_meals),
-            grouped_meals=grouped_meals,
-            username=username,
-            userFirstname=userFirstname,
-        )
-
-    else:
-        return flask.render_template(
-            "dashboard.html",
-            hall="Null",
-            mealtime=curMeal,
-            totalMeals="Null",
-            grouped_meals="Null",
-            username=username,
-            userFirstname=userFirstname,
-        )
+    return flask.render_template(
+        "dashboard.html",
+        hall=dhall if dhall else "Null",
+        mealtime=curMeal,
+        totalMeals=len(filtered_meals) if filtered_meals else "Null",
+        grouped_meals=grouped_meals if grouped_meals else "Null",
+        username=username,
+        userFirstname=userFirstname,
+    )
 
 
 # Find Meals Page
@@ -155,13 +130,13 @@ def find_meals():
     if auth.is_authenticated():
         user_info = auth.authenticate()
         username = user_info["user"]
-        preferences = database.get_user_prefs(username)
-        if preferences:
-            vegan_vegetarian = preferences.get("veg", False)
-            halal = preferences.get("halal", False)
-            gluten_free = preferences.get("glutenfree", False)
-            dairy_free = preferences.get("dairyfree", False)
-            peanut_free = preferences.get("peanutfree", False)
+        preferences = database.get_user_info(username)["preferences"]
+
+        vegan_vegetarian = preferences.get("vegan-vegetarian", False)
+        halal = preferences.get("halal", False)
+        gluten_free = preferences.get("gluten-free", False)
+        dairy_free = preferences.get("dairy-free", False)
+        peanut_free = preferences.get("peanut-free", False)
 
     today = datetime.datetime.now().strftime("%Y-%m-%d")
     maxdate = datetime.datetime.now() + datetime.timedelta(days=6)
@@ -187,10 +162,6 @@ def meals_list():
     mealTimes = flask.request.args.get("MTfilter", "").split(",")
     preferences = flask.request.args.get("ARfilter", "").split(",")
     date = flask.request.args.get("date")
-    print(diningHall)
-    print(mealTimes)
-    print(preferences)
-    print(date)
 
     if preferences == [""]:
         preferences = []
@@ -206,9 +177,13 @@ def meals_list():
         glutenfree = "gluten-free" in preferences
         dairyfree = "dairy-free" in preferences
         peanutfree = "peanut-free" in preferences
-        database.set_user_prefs(username, veg, halal, glutenfree, dairyfree, peanutfree)
 
-        fav_meals = database.get_fav_meals(username)
+        result = database.set_user_prefs(
+            username, veg, halal, glutenfree, dairyfree, peanutfree
+        )
+
+        fav_meals = result["fav_meals"]
+        print(fav_meals)
         for meal in meals_list:
             meal["is_fav"] = meal["name"] in fav_meals
 
@@ -216,7 +191,6 @@ def meals_list():
     for meal in filtered_meals:
         grouped_meals[meal["dhall"]].append(meal)
 
-    print(preferences)
     return flask.render_template(
         "meals_list.html",
         grouped_meals=grouped_meals,
@@ -236,9 +210,11 @@ def updatefav():
         return
 
     username = flask.session.get("user_info")["user"]
-    meal_name = flask.request.args.get("name")
 
-    if database.is_fav_meal(username, meal_name):
+    meal_name = flask.request.args.get("name")
+    current_fav = flask.request.args.get("fav")
+
+    if current_fav == "true":
         database.remove_fav_meal(username, meal_name)
     else:
         database.add_fav_meal(username, meal_name)

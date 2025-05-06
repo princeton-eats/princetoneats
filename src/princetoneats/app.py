@@ -81,6 +81,7 @@ def dashboard():
     best_dhall = None
     for hall in halls:
         meals_list = asyncio.run(scrapedining.get_meal_info(hall, None, curMeal))
+        print(hall, meals_list)
         meals_list_withPref = scrapedining.filter_meals(meals_list, tags=preferences)
         print(hall, len(meals_list_withPref))
         if len(meals_list_withPref) >= 3:

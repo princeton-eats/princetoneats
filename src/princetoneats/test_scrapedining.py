@@ -102,14 +102,13 @@ def test_filter_meals_single_tag():
 
 def test_filter_meals_multiple_tags():
     meals = [
-        {"name": "Meal1", "dietary_tags": ["halal", "gluten-free"]},
-        {"name": "Meal2", "dietary_tags": ["halal", "dairy-free", "gluten-free"]},
+        {"name": "Meal1", "dietary_tags": ["halal", "gluten-free", "peanut-free"]},
+        {"name": "Meal2", "dietary_tags": ["dairy-free", "gluten-free"]},
         {"name": "Meal3", "dietary_tags": ["halal", "peanut-free"]},
     ]
     filtered = scrapedining.filter_meals(meals, ["halal", "gluten-free"])
-    assert len(filtered) == 2
+    assert len(filtered) == 1
     assert filtered[0]["name"] == "Meal1"
-    assert filtered[1]["name"] == "Meal2"
 
 
 def test_filter_meals_no_matches():
@@ -125,4 +124,11 @@ def test_filter_meals_no_matches():
 def test_get_meal_info():
     meals = asyncio.run(scrapedining.get_meal_info(["roma"], None, "Lunch"))
     assert len(meals) > 0
-    # TODO add more specific assertions based on expected response
+    for meal in meals:
+        assert "dhall" in meal
+        assert "name" in meal
+        assert "ingredients" in meal
+        assert "allergens" in meal
+        assert "dietary_tags" in meal
+        assert "ingredients_string" in meal
+        assert "allergens_string" in meal

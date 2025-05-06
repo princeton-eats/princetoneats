@@ -1,6 +1,6 @@
 import pytest
 import princetoneats.app as app
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 
 @pytest.fixture
@@ -63,26 +63,43 @@ def test_dashboard_authenticated(
         },
     }
 
-    # Mock meal info response
-    mock_meal = MagicMock()
-    mock_meal.return_value = [
+    mock_get_meal_info.return_value = [
         {
             "dhall": "Roma",
-            "name": "Test Meal",
+            "name": "Test Meal 1",
             "ingredients": ["Ingredient1", "Ingredient2"],
             "allergens": ["None"],
             "dietary_tags": ["vegan-vegetarian", "gluten-free", "peanut-free"],
-        }
+        },
+        {
+            "dhall": "Roma",
+            "name": "Test Meal 2",
+            "ingredients": ["Ingredient1", "Ingredient2"],
+            "allergens": ["None"],
+            "dietary_tags": ["vegan-vegetarian", "gluten-free", "peanut-free"],
+        },
+        {
+            "dhall": "Roma",
+            "name": "Test Meal 3",
+            "ingredients": ["Ingredient1", "Ingredient2"],
+            "allergens": ["None"],
+            "dietary_tags": ["vegan-vegetarian", "gluten-free", "peanut-free"],
+        },
     ]
-    mock_get_meal_info.return_value = mock_meal
 
     response = authenticated_client.get("/dashboard")
     assert response.status_code == 200
+    assert "Roma" in response.text
 
 
 def test_find_meals_page(client):
     response = client.get("/find_meals")
     assert response.status_code == 200
+    assert '"vegan-vegetarian" >' in response.text
+    assert '"halal" >' in response.text
+    assert '"gluten-free" >' in response.text
+    assert '"dairy-free" >' in response.text
+    assert '"peanut-free" >' in response.text
 
 
 @patch("princetoneats.database.get_user_info")
@@ -108,15 +125,9 @@ def test_find_meals_authenticated(mock_get_user_info, authenticated_client):
     assert '"peanut-free" checked>' in response.text
 
 
-@patch("princetoneats.auth.is_authenticated")
 @patch("princetoneats.scrapedining.get_meal_info")
 @patch("princetoneats.scrapedining.filter_meals")
-def test_meals_list(
-    mock_filter_meals, mock_get_meal_info, mock_is_authenticated, authenticated_client
-):
-    # Mock authentication
-    mock_is_authenticated.return_value = True
-    # Mock meal info response
+def test_meals_list(mock_filter_meals, mock_get_meal_info, client):
     meals = [
         {
             "dhall": "Roma",
@@ -136,7 +147,7 @@ def test_meals_list(
     mock_get_meal_info.return_value = meals
     mock_filter_meals.return_value = [meals[0]]
 
-    response = authenticated_client.get(
+    response = client.get(
         "/meals_list?DHfilter=Roma&MTfilter=Lunch&ARfilter=vegan-vegetarian&date=2023-05-01"
     )
     assert response.status_code == 200

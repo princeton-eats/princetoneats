@@ -4,14 +4,13 @@ import random
 import flask
 import dotenv
 import os
-import scrapedining
-import auth
+import princetoneats.scrapedining as scrapedining
+import princetoneats.auth as auth
+import princetoneats.database as database
 import re
 import datetime
 from collections import defaultdict
 import asyncio
-
-import database
 
 # -----------------------------------------------------------------------
 
@@ -207,7 +206,7 @@ def meals_list():
 @app.route("/updatefav", methods=["GET"])
 def updatefav():
     if not auth.is_authenticated():
-        return
+        return flask.Response(status=500)
 
     username = flask.session.get("user_info")["user"]
 

@@ -18,11 +18,11 @@ repos:
         entry: bash -c 'pip freeze > requirements.txt && git add requirements.txt && git commit --amend --no-edit'
         language: system
         stages: [pre-push]
-  # - repo: local
-  #   hooks:
-  #     - id: pytest
-  #       name: pytest
-  #       entry: python -m pytest
-  #       language: system
-  #       pass_filenames: false
-  #       always_run: true
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: python -m pytest
+        language: system
+        pass_filenames: false
+        always_run: true

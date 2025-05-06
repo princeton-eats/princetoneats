@@ -47,8 +47,6 @@ def _db_helper(username, callback_func):
     """The callback_func takes the user object and db session and
     will update the db and/or return a value"""
     try:
-        engine = sqlalchemy.create_engine(DATABASE_URL)
-
         with sqlalchemy.orm.Session(engine) as session:
             query = session.query(UserPreference).filter(
                 UserPreference.username == username
@@ -190,15 +188,6 @@ def remove_fav_meal(username, meal_name):
             if meal_name in user.fav_meals:
                 user.fav_meals = user.fav_meals.replace(meal_name, "")
         return ret
-
-    return _db_helper(username, callback_func)
-
-
-def is_fav_meal(username, meal_name):
-    def callback_func(user, session):
-        if user is None:
-            return False
-        return meal_name in user.fav_meals
 
     return _db_helper(username, callback_func)
 

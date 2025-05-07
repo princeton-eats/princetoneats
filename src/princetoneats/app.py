@@ -4,14 +4,13 @@ import random
 import flask
 import dotenv
 import os
-import scrapedining
-import auth
+import princetoneats.scrapedining as scrapedining
+import princetoneats.auth as auth
+import princetoneats.database as database
 import re
 import datetime
 from collections import defaultdict
 import asyncio
-
-import database
 
 # -----------------------------------------------------------------------
 
@@ -82,6 +81,7 @@ def dashboard():
     best_dhall = None
     for hall in halls:
         meals_list = asyncio.run(scrapedining.get_meal_info(hall, None, curMeal))
+        print(hall, meals_list)
         meals_list_withPref = scrapedining.filter_meals(meals_list, tags=preferences)
         print(hall, len(meals_list_withPref))
         if len(meals_list_withPref) >= 3:
@@ -207,7 +207,7 @@ def meals_list():
 @app.route("/updatefav", methods=["GET"])
 def updatefav():
     if not auth.is_authenticated():
-        return
+        return flask.Response(status=500)
 
     username = flask.session.get("user_info")["user"]
 

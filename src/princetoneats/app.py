@@ -4,9 +4,9 @@ import random
 import flask
 import dotenv
 import os
-import princetoneats.scrapedining as scrapedining
-import princetoneats.auth as auth
-import princetoneats.database as database
+import scrapedining
+import auth
+import database
 import re
 import datetime
 from collections import defaultdict
@@ -69,22 +69,30 @@ def dashboard():
 
     # determine current meal
     curhour = datetime.datetime.now().hour
+    if curhour < 9:
+        curMeal = "Breakfast"
     if curhour < 14:
         curMeal = "Lunch"
     else:
         curMeal = "Dinner"
+
+    fav_meals = db_info["fav_meals"]
 
     # find dining hall with most preferred meals
     halls = [["Roma"], ["Forbes"], ["WB"], ["YN"], ["CJL"], ["Grad"]]
     random.shuffle(halls)
 
     best_dhall = None
+    fav_meal_counter = 0
     for hall in halls:
         meals_list = asyncio.run(scrapedining.get_meal_info(hall, None, curMeal))
-        print(hall, meals_list)
         meals_list_withPref = scrapedining.filter_meals(meals_list, tags=preferences)
-        print(hall, len(meals_list_withPref))
-        if len(meals_list_withPref) >= 3:
+
+        for meal in meals_list:
+            if meal["name"] in fav_meals:
+                fav_meal_counter += 1
+
+        if fav_meal_counter >= 1 or len(meals_list_withPref) >= 3:
             best_dhall = hall
             break
 
@@ -96,7 +104,6 @@ def dashboard():
     if best_dhall is not None:
         filtered_meals = scrapedining.filter_meals(meals_list, tags=preferences)
 
-        fav_meals = db_info["fav_meals"]
         for meal in meals_list:
             meal["is_fav"] = meal["name"] in fav_meals
 

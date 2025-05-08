@@ -111,7 +111,7 @@ def dashboard():
         for meal in filtered_meals:
             grouped_meals[meal["dhall"]].append(meal)
 
-        dhall = next(iter(grouped_meals))
+        dhall = next(iter(grouped_meals)) if len(grouped_meals) > 0 else None
 
     return flask.render_template(
         "dashboard.html",

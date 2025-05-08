@@ -2,32 +2,27 @@
 
 Welcome to Princeton Eats.
 
-## Set-up Instructions
+Run the `setup.sh` script which will set up a virtual environment with the necessary requirements, and save a random `APP_SECRET_KEY` for CAS authentication. Then, refer to Yusuf's email to find the `DATABASE_URL` and export it as an environment variable with this name.
 
-First, clone the repository from GitHub to your local machine:
-
-```bash
-git clone https://github.com/princeton-eats/princetoneats.git
-cd princetoneats
-```
-
-Run the `setup.sh` script to complete necessary setup.
-
-```bash
-bash setup.sh
-```
-
-Run the app on `localhost:8000`.
+Then, to run the app on `localhost:8000` run the following:
 
 ```bash
 python src/princetoneats/app.py
 ```
 
-For development, run `dev.sh` to set up your environment for development and checkout the most recent development branch.
+To perform unit-tests do the following:
 
-```bash
-bash dev.sh
+1. Modify `src/princetoneats/app.py` lines 7-9 to read
+
 ```
+import princetoneats.scrapedining as scrapedining
+import princetoneats.auth as auth
+import princetoneats.database as database
+```
+
+This is required for `pytest` to work. Then, run `pytest` in the terminal to run unit-tests.
+
+**Importantly, you have to change these lines back to their original state in order to run the app.**
 
 --
 Created by Yusuf, Adham, Ndongo, Achilles, Akuei

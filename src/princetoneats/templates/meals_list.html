@@ -41,7 +41,6 @@
         <div class="row w-100 justify-content-center">
 
             <div class="containerMeals col-md-8 mb-3 mb-md-0 mt-3" style="height: 600px; background-color: #C6D8FF;">
-                <!-- Error Handling when no preferences align with the meals -->
                 {% if grouped_meals|length == 0 %}
                 <div class="containerMeals" style="background-color: white;">
                         <h1 style="margin: 40px;">Sorry! We couldn't find any meals to match your outlined preferences. Please conduct another search. </h1>
@@ -50,8 +49,7 @@
                                 {% for pref in preferences %} <b>{{ pref }}</b>{% if not loop.last %},
                                     {% endif %}
                                 {% endfor %}
-                            as your preference
-                                {% if preferences|length > 1 %}s {% endif %} and
+                            as your preference{% if preferences|length > 1 %}s {% endif %} and
                                 {% for dhall in grouped_meals.items() %}
                                     <b>{{dhall[0]}}</b>{% if not loop.last %},
                                     {% endif %}
@@ -60,8 +58,9 @@
                             for <b>{{mealtimes[0]}}</b>.
                         </h3>
                 </div>
+
                 {% else %}
-                <!-- Main Div on successful return -->
+
                 <div>
                         <h2>Here are Your Options</h2>
                         <h3 class="lead">
@@ -70,8 +69,7 @@
                                     <b>{{ pref }}</b>{% if not loop.last %},
                                     {% endif %}
                                 {% endfor %}
-                            as your preference
-                                {% if preferences|length > 1 %}s {% endif %} and
+                            as your preference{% if preferences|length > 1 %}s {% endif %} and
                                 {% for dhall in grouped_meals.items() %}
                                     <b>{{dhall[0]}}</b>{% if not loop.last %},
                                     {% endif %}

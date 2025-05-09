@@ -69,8 +69,6 @@ def dashboard():
 
     # determine current meal
     curhour = datetime.datetime.now().hour
-    if curhour < 9:
-        curMeal = "Breakfast"
     if curhour < 14:
         curMeal = "Lunch"
     else:
